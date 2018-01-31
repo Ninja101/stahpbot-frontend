@@ -1,0 +1,35 @@
+.page-content{padding-bottom:50px !important;}
+
+@media (min-width: 1200px) {
+	.page-content-wrapper .page-content{min-height: 1200px !important;}
+}
+#manage-alerts > .row
+{
+	margin: 0 auto;
+}
+tooltip-container
+{
+	z-index: 9999;
+	pointer-events: none;
+	width: 200px;
+}
+.tooltip
+{
+	min-width: 200px;
+}
+.down-arrow:before
+{
+	float: right;
+	width: 20px;
+	text-align: center;
+	display: inline;
+	font-size: 16px;
+	font-family: 'fontello';
+	height: auto;
+	content: '\f107';
+	font-weight: 300;
+	text-shadow: none;
+	position: absolute;
+	top: 4px;
+	right: 14px;
+}

@@ -1,0 +1,141 @@
+<div id="controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="addModal.open( )" class="btn btn-lg green">Add User</a>
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Twitch #</th>
+				<th>Username</th>
+				<th>Email Address</th>
+				<th>Role</th>
+				<th>Active</th>
+				<th style="min-width: 100px;">Joined</th>
+				<th style="min-width: 100px;">Last Login</th>
+				<th style="min-width: 150px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let u of users | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+				<td>
+					{{ u.user_id }}
+				</td>
+				<td>
+					{{ u.twitch_id }}
+				</td>
+				<td>
+					{{ u.username }}
+				</td>
+				<td>
+					{{ u.email_address }}
+				</td>
+				<td>
+					{{ u.rank[0].toUpperCase( ) + u.rank.substr( 1 ) }}
+				</td>
+				<td>
+					<span [attr.class]="u.active == 1 ? 'text-success' : 'text-danger'">{{ u.active == 1 ? 'Yes' : 'No' }}</span>
+				</td>
+				<td>
+					{{ ( u.timestamp * 1000 ) | date }}
+				</td>
+				<td>
+					<span *ngIf="u.login_timestamp > 0">{{ ( u.login_timestamp * 1000 ) | date }}</span>
+					<span *ngIf="!u.login_timestamp || u.login_timestamp == 0">N/A</span>
+				</td>
+				<td>
+					<a href="javascript:;" class="btn btn-sm btn-primary" (click)="currEntry = u; addModal.open( )" *ngIf="u.rank != 'owner'" title="Edit">
+						<i class="icon-pencil"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;Edit</span>
+					</a>&nbsp;
+					<a href="javascript:;" class="btn btn-sm btn-warning" (click)="userToggle( u )" *ngIf="u.rank != 'owner'" title="{{ u.active == 1 ? 'Disable' : 'Enable' }}">
+						<i class="icon-block"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ u.active == 1 ? 'Disable' : 'Enable' }}</span>
+					</a>&nbsp;
+					<a href="javascript:;" class="btn btn-sm red-mint" (click)="currEntry = u; userDelete( );" *ngIf="u.rank != 'owner'" title="Delete">
+						<i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;Delete</span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div *ngIf="fetching" class="text-center">Loading...</div>
+
+<div id="bottom-controls">
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<modal  #addModal
+        title="{{ currEntry.exists ? 'Edit' : 'Add' }} User"
+        cancelButtonLabel="Cancel"
+        submitButtonLabel="{{ currEntry.exists ? 'Edit' : 'Add' }}{{ pending ? 'ing' : '' }} User"
+        modalClass="modal-md"
+        [hideCloseButton]="true"
+        [closeOnEscape]="false"
+        [closeOnOutsideClick]="false"
+        (onClose)="clearVars( )"
+        (onSubmit)="currEntry.exists ? userEdit( ) : userAdd( )">
+    <modal-content>
+        <form class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Twitch ID:
+				</label>
+				<div class="col-md-4">
+					<input type="text" class="form-control" name="twitch_id" [(ngModel)]="currEntry.twitch_id" required />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4"></label>
+				<div class="col-md-4">
+					<button class="btn blue" (click)="getTwitchId( currEntry.username )">Fetch Twitch ID</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Username:
+				</label>
+				<div class="col-md-6">
+					<input type="text" class="form-control" name="username" [(ngModel)]="currEntry.username" required />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Email Address:
+				</label>
+				<div class="col-md-6">
+					<input type="text" class="form-control" name="email_address" [(ngModel)]="currEntry.email_address" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Active
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="active" [(ngModel)]="currEntry.active" required />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Role:
+				</label>
+				<div class="col-md-4">
+					<select class="form-control" name="role" [(ngModel)]="currEntry.rank" required>
+						<option value="user">User</option>
+						<option value="admin">Admin</option>
+						<option value="owner">Owner</option>
+					</select>
+				</div>
+			</div>
+		</form>
+    </modal-content>
+</modal>

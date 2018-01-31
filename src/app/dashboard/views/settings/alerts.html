@@ -1,0 +1,443 @@
+<div *ngIf="not_allowed">
+	<h3 class="text-center">Not authorized to access this page</h3>
+</div>
+<div class="row" *ngIf="!not_allowed">
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Generic</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable alerts for Bits
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_bits' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_bits" name="alert_bits" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable alerts for Donation
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_donations' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_donations" name="alert_donations" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable alerts for Follower
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_followers' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_followers" name="alert_followers" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable alerts for Host
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_host' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_host" name="alert_host" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable alerts for Subscriber
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_subscribers' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_subscribers" name="alert_subscribers" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Text-to-Speech Settings</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable Text-to-speech on donations
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_donations_tts' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_donations_tts" name="alert_donations_tts" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable Text-to-speech on subscription messages
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_subscriber_tts' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.alert_subscriber_tts" name="alert_subscriber_tts" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Text-to-speech speed
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_donations_tts_rate' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="range" class="form-control" [(ngModel)]="settings.alert_donations_tts_rate" name="alert_donations_tts_rate" max="150" min="50" step="10" />
+							<span>{{ settings.alert_donations_tts_rate }}%</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Text-to-speech voice
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_donations_tts_voice' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<select class="form-control" [(ngModel)]="settings.alert_donations_tts_voice" name="alert_donations_tts_voice">
+								<option *ngFor="let voice of validVoices" value="{{ voice }}">
+									{{ voice }}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Text-to-speech volume
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_donations_tts_volume' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="range" class="form-control" [(ngModel)]="settings.alert_donations_tts_volume" name="alert_donations_tts_volume" max="100" min="1" />
+							<span>{{ settings.alert_donations_tts_volume }}%</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Text-to-speech minimum donation
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_donations_tts_minimum' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_donations_tts_minimum" name="alert_donations_tts_minimum" />
+								<div class="input-group-addon">{{ settings.donation_preferred }}</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Generate Alert Links for OBS</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<h3>Alert URL</h3>
+				<div style="margin-left:50px;margin-right:50px;">
+					<input type="text" class="form-control" name="main_alert_url" [attr.value]="alert_url" />
+					<div class="row">
+						<div class="col-lg-offset-2 col-lg-4 col-md-12">
+							<div class="checkbox">
+								<label><input type="checkbox" name="main_bits" [(ngModel)]="alertUrl.bits" (ngModelChange)="updateAlertUrl( )">Bits alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="main_followers" [(ngModel)]="alertUrl.follower" (ngModelChange)="updateAlertUrl( )">Follower alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="main_subscribers" [(ngModel)]="alertUrl.subscriber" (ngModelChange)="updateAlertUrl( )">Subscriber alerts</label>
+							</div>
+						</div>
+						<div class="col-lg-4 col-md-12">
+							<div class="checkbox">
+								<label><input type="checkbox" name="main_donations" [(ngModel)]="alertUrl.donation" (ngModelChange)="updateAlertUrl( )">Donation alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="main_host" [(ngModel)]="alertUrl.host" (ngModelChange)="updateAlertUrl( )">Hosted alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="main_transparent" [(ngModel)]="alertUrl.transparent" (ngModelChange)="updateAlertUrl( true )">Transparent background</label>
+							</div>
+						</div>
+					</div>
+					<div class="text-center">
+						<small>Dimensions for browser plugin:</small>
+						<div>
+							Width: <b>{{ alert_width > 0 ? alert_width : '--' }}</b>&nbsp;
+							Height: <b>{{ alert_height > 0 ? alert_height : '--' }}</b>
+						</div>
+					</div>
+				</div>
+				<h3>Events URL</h3>
+				<div style="margin-left:50px;margin-right:50px;">
+					<input type="text" class="form-control" name="alert_event_url" [attr.value]="event_url" />
+					<div class="row">
+						<div class="col-lg-offset-2 col-lg-4 col-md-12">
+							<div class="checkbox">
+								<label><input type="checkbox" name="event_bits" [(ngModel)]="alertEventUrl.bits" (ngModelChange)="updateEventUrl( )">Bits alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="event_followers" [(ngModel)]="alertEventUrl.follower" (ngModelChange)="updateEventUrl( )">Follower alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="event_subscribers" [(ngModel)]="alertEventUrl.subscriber" (ngModelChange)="updateEventUrl( )">Subscriber alerts</label>
+							</div>
+						</div>
+						<div class="col-lg-4 col-md-12">
+							<div class="checkbox">
+								<label><input type="checkbox" name="event_donations" [(ngModel)]="alertEventUrl.donation" (ngModelChange)="updateEventUrl( )">Donation alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="event_host" [(ngModel)]="alertEventUrl.host" (ngModelChange)="updateEventUrl( )">Hosted alerts</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="event_transparent" [(ngModel)]="alertEventUrl.transparent" (ngModelChange)="updateEventUrl( )">Transparent background</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Event Alert</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Add new events to the
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_direction' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<select class="form-control" [(ngModel)]="settings.alert_event_direction" name="alert_event_direction">
+								<option value="top">Top</option>
+								<option value="bottom">Bottom</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Maximum events to show
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_maximum' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_event_maximum" name="alert_event_maximum" />
+								<div class="input-group-addon">events</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event alert width
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_width' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_event_width" (change)="updateExample( )" name="alert_event_width" />
+								<div class="input-group-addon">pixels</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event alert height
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_height' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_event_height" (change)="updateExample( )" name="alert_event_height" />
+								<div class="input-group-addon">pixels</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event font
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_font' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<select class="form-control" [(ngModel)]="settings.alert_event_font" (change)="updateExample( )" name="alert_event_font">
+								<option *ngFor="let font of validFonts" value="{{ font }}" [attr.style]="styles[font]">{{ translate[font] || font }}</option>
+							</select>
+						</div>
+					</div>
+					<hr />
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Latest event background colour
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_latest_background' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="text" class="form-control" [(ngModel)]="settings.alert_event_latest_background" (change)="updateExample( )" name="alert_event_latest_background" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Latest event text colour
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_latest_colour' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="text" class="form-control" [(ngModel)]="settings.alert_event_latest_colour" (change)="updateExample( )" name="alert_event_latest_colour" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Latest event stroke width
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_latest_stroke_width' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_event_latest_stroke_width" (change)="updateExample( )" name="alert_event_latest_stroke_width" />
+								<div class="input-group-addon">pixels</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Latest event stroke colour
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_latest_stroke_colour' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="text" class="form-control" [(ngModel)]="settings.alert_event_latest_stroke_colour" (change)="updateExample( )" name="alert_event_latest_stroke_colour" />
+						</div>
+					</div>
+					<hr />
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event background colour
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_background' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="text" class="form-control" [(ngModel)]="settings.alert_event_background" (change)="updateExample( )" name="alert_event_background" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event text colour
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_colour' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="text" class="form-control" [(ngModel)]="settings.alert_event_colour" (change)="updateExample( )" name="alert_event_colour" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event stroke width
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_stroke_width' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_event_stroke_width" (change)="updateExample( )" name="alert_event_stroke_width" />
+								<div class="input-group-addon">pixels</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Event stroke colour
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_event_stroke_colour' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<input type="text" class="form-control" [(ngModel)]="settings.alert_event_stroke_colour" (change)="updateExample( )" name="alert_event_stroke_colour" />
+						</div>
+					</div>
+				</form>
+				<h3>Example</h3>
+				<div class="text-center" style="margin-bottom:20px;">
+					<button class="btn btn-lg btn-primary" (click)="addExample( )">
+						Add Example Event
+					</button>
+				</div>
+				<div id="events" [attr.style]="exampleStyle">
+					<div	*ngFor="let event of exampleEvents; let idx = index; let first = first; let last = last"
+							[attr.id]="'event-' + idx"
+							class="event"
+							[class.show]="!event.hide"
+							[class.heightzero]="event.hide"
+							[class.latest]="( settings.alert_event_direction == 'bottom' && last ) || ( settings.alert_event_direction == 'top' && first )"
+							[attr.style]="( ( settings.alert_event_direction == 'bottom' && last ) || ( settings.alert_event_direction == 'top' && first ) ) ? exampleLatestStyle : exampleEventStyle">
+						<div class="text">
+							{{ event.name }}
+						</div>
+						<div class="sub-text">
+							{{ event.type }}
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="text-center" *ngIf="!not_allowed">
+	<button	[@btnState]="updated ? 'updated' : 'update'"
+			type="button"
+			(click)="updateSettings( )"
+			class="btn btn-lg {{ updated ? 'btn-default blue' : 'btn-default green' }}"
+			style="min-width: 50%"
+			[disabled]="updating">
+		<span *ngIf="!updated">{{ 'button.settings_update' | translate }}</span>
+		<span *ngIf="updated"><i class="icon-ok"></i> {{ 'button.settings_updated' | translate }}</span>
+	</button>
+</div>

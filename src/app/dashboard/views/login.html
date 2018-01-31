@@ -1,0 +1,34 @@
+<div class="login-overlay">
+	<div class="login">
+		<div class="logo">
+			<img src="/img/logo-big.png" alt="" />
+		</div>
+		<div class="content">
+			<div class="login-form">
+				<h3 class="form-title font-green">Connect</h3>
+				<div class="text-center" id="btn-holder">
+					<a href="javascript:;" [class.disabled]="loading" (click)="loginTwitch( )" class="btn btn-lg btn-twitch">
+						<span [class.active]="!loading && !loggingIn"><i class="icon-twitch"></i>&nbsp;&nbsp;{{ 'auth.login' | translate }}</span>
+						<span [class.active]="loading && !loggingIn"><img src="/img/ajax-loader.gif" />&nbsp;{{ 'auth.redirect' | translate }}</span>
+						<span [class.active]="loggingIn"><img src="/img/ajax-loader.gif" />&nbsp;{{ 'auth.process' | translate }}</span>
+					</a>
+				</div>
+			</div>
+			<br />
+			<div [@showHide]="" *ngIf="showPerms && !loggingIn ">
+				<h5>Permissions explained</h5>
+				<ul>
+					<li><b>View your email address</b> - We don't use your email, we just check that you have a confirmed email address.</li>
+					<li><b>Run commercials on your channel</b> - We need this so you can start commercials from the Stahpbot dashboard.</li>
+					<li><b>Update your channel's title, game, status, and other metadata</b> - We need this so you can update your stream title from the !title command and on the dashboard.</li>
+					<li><b>Cut VODs</b> - We don't use this permission, it is automatically listed by Twitch for some reason. ¯\_(ツ)_/¯</li>
+					<li><b>Get a list of all subscribers to your channel</b> - This permission is used if you enable the !subs command, it will output the current subscriber count.</li>
+					<li><b>Check if a user is subscribed to your channel</b> - This is used for giveaways, it will check if the winner is a subscriber. This permission will be phased out soon.</li>
+				</ul>
+			</div>
+			<button class="btn red" style="margin:0 auto;margin-top:20px;width:100%;" (click)="showPerms = !showPerms" *ngIf="!loggingIn">
+				{{ showPerms ? 'Hide' : 'Explain Permissions' }}
+				</button>
+		</div>
+	</div>
+</div>

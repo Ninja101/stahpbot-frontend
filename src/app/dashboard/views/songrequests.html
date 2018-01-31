@@ -1,0 +1,103 @@
+<div class="row">
+	<div class="col-lg-4 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Player</span>
+				</div>
+			</div>
+			<div class="portlet-body text-center">
+				<h4 *ngIf="playing">
+					{{ playing.title }}
+				</h4>
+				<div id="youtube-player"></div>
+
+				<div class="row" id="controls">
+					<div class="col-lg-4 col-md-12">
+						<div class="label label-info">
+							{{ currTime }}/{{ currDuration }}
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						<div class="btn-group">
+							<button type="button" class="btn blue" [disabled]="!ready" [attr.title]="currState == 1 ? 'Pause' : 'Play'" (click)="ytPlayPause( )">
+								<i *ngIf="currState == 1" class="icon-pause"></i>
+								<i *ngIf="currState != 1" class="icon-play"></i>
+							</button>
+							<button type="button" class="btn red" [disabled]="!ready || currState < 1 || currState == 5" title="Stop" (click)="ytStop( )">
+								<i class="fa icon-stop"></i>
+							</button>
+							<button type="button" class="btn green" [disabled]="!ready || currState < 1 || currState == 5 || requests.length < 2" title="Skip Current Track" (click)="ytSkip( )">
+								<i class="fa icon-fast-fw"></i>
+							</button>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						Volume: {{ volume }}%<br />
+						<input type="range" name="volume" (change)="setVolume( $event )" [(ngModel)]="volume" min="0" max="100" />
+					</div>
+				</div>
+				<div id="extra-controls">
+					<label class="checkbox">
+						<input type="checkbox" name="autoplay" (change)="toggleAutoplay( $event )" [(ngModel)]="autoplay">Autoplay queue on page load
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-8 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Requests Queue</span>
+				</div>
+			</div>
+			<div class="portlet-body table-responsive" id="requests">
+				<table class="table table-bordered table-striped table-condensed">
+					<thead>
+						<tr>
+							<th class="text-center">#</th>
+							<th width="30%">Title</th>
+							<th>Duration</th>
+							<th>URL</th>
+							<th style="min-width: 100px;">Requested</th>
+							<th>Requested By</th>
+							<th style="min-width: 50px;">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let request of requests; let i = index" [attr.class]="request.playing ? 'success' : ''">
+							<td>
+								<span *ngIf="!request.playing">{{ i + 1 }}</span>
+								<i class="icon-play" *ngIf="request.playing"></i>
+							</td>
+							<td>
+								{{ request.title }}
+							</td>
+							<td>
+								{{ request.duration }}
+							</td>
+							<td>
+								{{ request.url }}
+							</td>
+							<td>
+								{{ ( request.timestamp * 1000 ) | date:'short' }}
+							</td>
+							<td>
+								{{ request.username }}
+							</td>
+							<td>
+								<a href="javascript:;" class="btn btn-sm red-mint" (click)="requestDelete( request )" title="Delete">
+									<i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.delete' | translate }}</span>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div *ngIf="( !requests || requests.length == 0 ) && !error" class="text-center">
+					<i>There are no pending requests</i>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

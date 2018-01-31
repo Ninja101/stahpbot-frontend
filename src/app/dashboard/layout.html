@@ -1,0 +1,297 @@
+<div class="page-wrapper">
+	<div class="page-header navbar navbar-fixed-top">
+		<div class="page-header-inner ">
+			<div class="page-logo">
+				<a href="/">
+					<img src="/img/logo.png" alt="logo" class="logo-default" />
+				</a>
+				<div class="menu-toggler sidebar-toggler" (click)="toggleSidebar( )">
+					<span></span>
+				</div>
+			</div>
+			<a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse" (click)="toggleResponsiveSidebar( )">
+				<span></span>
+			</a>
+			<div class="top-menu">
+				<ul class="nav navbar-nav pull-right" *ngIf="user">
+					<li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar" dropdown>
+						<a href="javascript:;" style="margin-top:-5px;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" (click)="markNotificationsRead( )" dropdownToggle>
+							<i class="icon-bell"></i>
+							<span *ngIf="notifications_unread > 0" class="badge badge-default"> {{ notifications_unread }} </span>
+						</a>
+						<ul class="dropdown-menu" dropdownMenu>
+							<li class="external">
+								<h3>
+									<span class="bold">{{ notifications_unread }} pending</span> notifications
+								</h3>
+							</li>
+							<li>
+								<ul class="dropdown-menu-list scroller" style="height:250px;overflow-y:scroll;" data-handle-color="#637283">
+									<li *ngFor="let n of notifications">
+										<a href="{{ n.link }}" target="_blank">
+											<span class="time">{{ n.getTimeAgo( ) }}</span>
+											<span class="details">
+												<span class="label label-sm label-icon label-{{ n.severity }}">
+													<i class="icon-{{ n.icon }}"></i>
+												</span>
+												{{ n.text }}
+											</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown dropdown-user" dropdown *ngIf="!isActive( '/login' )">
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" dropdownToggle>
+							<img alt="" class="img-circle" src="{{ user && user.twitch_image ? user.twitch_image : default_image }}" />
+							<span class="username username-hide-on-mobile"> {{ user ? user.display_name : "" }} </span>
+							<i class="icon-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu dropdown-menu-default" dropdownMenu>
+							<!--<li>
+								<a href="/user/settings">
+									<i class="icon-wrench"></i> Settings
+								</a>
+							</li>-->
+							<li>
+								<a href="javascript:;" (click)="userLogout( )">
+									<i class="icon-key"></i> Log Out
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown dropdown-language" dropdown>
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" dropdownToggle>
+							<img alt="" [attr.src]="'/img/flags/' + currLanguage.icon + '.png'">
+							<i class="icon-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu dropdown-menu-default" dropdownMenu>
+							<li *ngFor="let lang of languages" [class.hide]="lang.code == currLanguage.code">
+								<a href="javascript:;" (click)="selectLanguage( lang.code )">
+									<img alt="" src="/img/flags/{{ lang.icon }}.png"> {{ lang.display }}
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown dropdown-quick-sidebar-toggler" *ngIf="!isActive( '/login' )">
+						<a href="javascript:;" style="margin-top:-5px;" (click)="userLogout( )" class="dropdown-toggle">
+							<i class="icon-logout"></i>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"> </div>
+	<div class="page-container">
+		<div class="page-sidebar-wrapper">
+			<div class="page-sidebar navbar-collapse collapse" [class.in]="!rsidebar_hidden" [@slideUpDown]="rsidebar_hidden ? 'true' : 'false'" (click)="clickedItem( )">
+				<ul *ngIf="user" class="page-sidebar-menu  page-header-fixed" [class.page-sidebar-menu-closed]="sidebar_hidden" [hidden]="isActive( '/login' )" style="padding-top: 20px">
+					<li class="sidebar-toggler-wrapper hide">
+						<div class="sidebar-toggler" (click)="toggleResponsiveSidebar( )">
+							<span></span>
+						</div>
+					</li>
+					<li class="nav-item start" [class.active]="isActive('/')">
+						<a [routerLink]="['/']" class="nav-link nav-toggle">
+							<i class="icon-home"></i>
+							<span class="title">{{ 'sidebar.dashboard' | translate }}</span>
+						</a>
+					</li>
+					<li class="heading">
+						<h3 class="uppercase">Main Features</h3>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/alerts')">
+						<a [routerLink]="['/alerts/']" class="nav-link nav-toggle">
+							<i class="icon-attention"></i>
+							<span class="title">{{ 'sidebar.alerts' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/messages')">
+						<a [routerLink]="['/messages']" class="nav-link nav-toggle">
+							<i class="icon-comment"></i>
+							<span class="title">{{ 'sidebar.messages' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/donations') || isActive('/donations/top')">
+						<a [routerLink]="['/donations']" class="nav-link nav-toggle">
+							<i class="icon-dollar"></i>
+							<span class="title">{{ 'sidebar.donations' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/events')">
+						<a [routerLink]="['/events']" class="nav-link nav-toggle">
+							<i class="icon-book"></i>
+							<span class="title">{{ 'sidebar.events' | translate }}</span>
+
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/songrequests')">
+						<!-- <a [routerLink]="['/songrequests']" class="nav-link nav-toggle"> -->
+						<a class="nav-link nav-toggle" style="cursor: not-allowed;" title="Temporarily disabled, pending rework">
+							<i class="icon-music"></i>
+							<span class="title"><s>{{ 'sidebar.songrequests' | translate }}</s></span>
+						</a>
+					</li>
+					<li class="heading">
+						<h3 class="uppercase">Chat Features</h3>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/blacklist')">
+						<a [routerLink]="['/blacklist']" class="nav-link nav-toggle">
+							<i class="icon-list-alt"></i>
+							<span class="title">{{ 'sidebar.blacklist' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/commands')">
+						<a [routerLink]="['/commands/']" class="nav-link nav-toggle">
+							<i class="icon-terminal"></i>
+							<span class="title">{{ 'sidebar.commands' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/giveaways')">
+						<a [routerLink]="['/giveaways']" class="nav-link nav-toggle">
+							<i class="icon-gift"></i>
+							<span class="title">{{ 'sidebar.giveaways' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/poll')">
+						<a [routerLink]="['/poll']" class="nav-link nav-toggle">
+							<i class="icon-list-numbered"></i>
+							<span class="title">{{ 'sidebar.poll' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/quotes')">
+						<a [routerLink]="['/quotes']" class="nav-link nav-toggle">
+							<i class=" icon-quote-right"></i>
+							<span class="title">{{ 'sidebar.quotes' | translate }}</span>
+						</a>
+					</li>
+					<li class="heading">
+						<h3 class="uppercase">Settings</h3>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/settings/general')">
+						<a [routerLink]="['/settings/general']" class="nav-link nav-toggle">
+							<i class="icon-cog-alt"></i>
+							<span class="title">{{ 'sidebar.settings_general' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/settings/alerts')">
+						<a [routerLink]="['/settings/alerts']" class="nav-link nav-toggle">
+							<i class="icon-attention"></i>
+							<span class="title">{{ 'sidebar.settings_alerts' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/settings/donations')">
+						<a [routerLink]="['/settings/donations']" class="nav-link nav-toggle">
+							<i class="icon-dollar-1"></i>
+							<span class="title">{{ 'sidebar.settings_donations' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/settings/timeouts')">
+						<a [routerLink]="['/settings/timeouts']" class="nav-link nav-toggle">
+							<i class="icon-clock"></i>
+							<span class="title">{{ 'sidebar.settings_timeouts' | translate }}</span>
+						</a>
+					</li>
+					<li class="heading">
+						<h3 class="uppercase">Misc</h3>
+					</li>
+					<li class="nav-item" [class.active]="isActive('/commands/bot')">
+						<a [routerLink]="['/commands/bot']" class="nav-link nav-toggle">
+							<i class="icon-desktop"></i>
+							<span class="title">{{ 'sidebar.bot_commands' | translate }}</span>
+						</a>
+					</li>
+					<!--<li class="nav-item" [class.active]="isActive('/downloads')">
+						<a [routerLink]="['/downloads']" class="nav-link nav-toggle">
+							<i class="icon-download-cloud"></i>
+							<span class="title">{{ 'sidebar.downloads' | translate }}</span>
+						</a>
+					</li>-->
+					<li class="nav-item" [class.active]="isActive('/subusers')">
+						<a [routerLink]="['/subusers']" class="nav-link nav-toggle">
+							<i class="icon-users"></i>
+							<span class="title">{{ 'sidebar.sub-users' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="https://status.stahpbot.com/" target="_blank" class="nav-link nav-toggle">
+							<i class="icon-chart-bar"></i>
+							<span class="title">{{ 'sidebar.system_status' | translate }}</span>
+						</a>
+					</li>
+					<li *ngIf="user && user.rank == 'owner'" class="nav-item" [class.active]="isActive('/users')">
+						<a [routerLink]="['/users']" class="nav-link nav-toggle">
+							<i class="icon-user"></i>
+							<span class="title">{{ 'sidebar.users' | translate }}</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="https://donate.stahpbot.com/stahpbot" class="nav-link nav-toggle" target="_blank">
+							<i class="icon-heart"></i>
+							<span class="title">{{ 'sidebar.donate' | translate }}</span>
+							<div *ngIf="!sidebar_hidden">
+								<div class="progress" style="margin-top:10px;margin-bottom:-3px;">
+									<div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" [attr.style]="donation_pct_style">
+										<span class="sr-only">{{ donation_pct }}% Complete</span>
+									</div>
+								</div>
+								<div class="pull-right" *ngIf="donation_goal == 0">Loading...</div>
+								<div class="pull-right" *ngIf="donation_goal > 0">
+									{{ donation_current | currency:donation_currency:true }} of {{ donation_goal | currency:donation_currency:true }}
+								</div>
+								<div class="clearfix"></div>
+								<div *ngIf="donation_top_m">
+									Top Donor (month):
+									<div class="text-center">
+										{{ donation_top_m.nickname }}: {{ donation_top_m.amount | currency:donation_top_m.currency:true }}
+									</div>
+								</div>
+								<div *ngIf="donation_top">
+									Top Donor (all time):
+									<div class="text-center">
+										{{ donation_top.nickname }}: {{ donation_top.amount | currency:donation_top.currency:true }}
+									</div>
+								</div>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="page-content-wrapper">
+			<div class="page-content">
+				<div class="page-bar">
+					<breadcrumb class="page-breadcrumb"></breadcrumb>
+					<div class="page-toolbar" *ngIf="!isActive( '/login' )" style="float:right;">
+						<div *ngIf="user && ( user.channels.length > 1 || user.rank == 'owner' )" class="btn-group pull-right" dropdown>
+							<div class="btn btn-sm red" *ngIf="active_channel" title="Active Channel">
+								{{ active_channel.name }}
+							</div>
+							<a href="#" class="btn green btn-sm btn-outline dropdown-toggle" dropdownToggle> {{ 'channel_select' | translate }}
+								<i class="icon-angle-down"></i>
+							</a>
+							<ul class="dropdown-menu pull-right" role="menu" dropdownMenu style="position: absolute !important;margin-top:0px;max-height:350px;overflow-y:scroll;">
+								<li *ngFor="let channel of user.channels">
+									<a href="javascript:;" (click)="selectChannel( channel )">
+										{{ channel.name }}
+										<i *ngIf="active_channel.twitch_id == channel.twitch_id" class="icon-ok" style="color: #36c6d3"></i>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<router-outlet></router-outlet>
+			</div>
+		</div>
+	</div>
+	<div class="page-footer">
+		<div class="page-footer-inner"> 2016 &copy; Stahpbot | <a href="https://status.stahpbot.com/">Status</a> | <a href="https://twitter.com/Stahpbot">{{ 'footer.support' | translate }}</a> | <a href="https://stahpbot.com/terms.html" target="_blank">{{ 'footer.terms' | translate }}</a> | <a href="https://stahpbot.com/privacy.html" target="_blank">{{ 'footer.privacy' | translate }}</a>
+		</div>
+		<div class="scroll-to-top" (click)="scrollTop( )">
+			<i class="icon-arrow-up"></i>
+		</div>
+	</div>
+</div>

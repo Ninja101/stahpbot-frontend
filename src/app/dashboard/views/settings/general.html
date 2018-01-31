@@ -1,0 +1,286 @@
+<div *ngIf="not_allowed">
+	<h3 class="text-center">Not authorized to access this page</h3>
+</div>
+<div class="row" *ngIf="!not_allowed">
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Main</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable Bot
+							<a href="javascript:;" [tooltip]="getHelpText( 'active' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.active" name="active" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable Commands
+							<a href="javascript:;" [tooltip]="getHelpText( 'commands_enabled' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.commands_enabled" name="commands_enabled" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Announce bits donations in chat
+							<a href="javascript:;" [tooltip]="getHelpText( 'bits_announce' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.bits_announce" name="bits_announce" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Announce subscribers in chat
+							<a href="javascript:;" [tooltip]="getHelpText( 'subscriber_announce' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.subscriber_announce" name="subscriber_announce" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Connections</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable Last.FM
+							<a href="javascript:;" [tooltip]="getHelpText( 'lastfm_active' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.lastfm_active" name="lastfm_active" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Last.FM Username
+							<a href="javascript:;" [tooltip]="getHelpText( 'lastfm_user' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" [(ngModel)]="settings.lastfm_user" name="lastfm_user" [disabled]="!settings.lastfm_active" />
+						</div>
+					</div>
+					<hr />
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Connect to Twitter
+							<a href="javascript:;" [tooltip]="getHelpText( 'twitter_name' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<span *ngIf="settings.twitter_name" class="text-success form-control-static">Connected</span>
+							<a *ngIf="!settings.twitter_name" (click)="connectTwitter( )" href="javascript:;" class="btn btn-default green" [class.disabled]="connectingTwitter">
+								{{ connectingTwitter ? 'Connecting...' : 'Connect' }}
+							</a>
+						</div>
+					</div>
+					<div class="form-group" *ngIf="settings.twitter_name">
+						<label class="control-label col-md-5">
+							Disconnect Twitter
+						</label>
+						<div class="col-md-4">
+							<a (click)="disconnectTwitter( )" href="javascript:;" class="btn btn-default red" [class.disabled]="discconnectingTwitter">
+								{{ disconnectingTwitter ? 'Disconnecting...' : 'Disconnect' }}
+							</a>
+						</div>
+					</div>
+					<div class="form-group" *ngIf="settings.twitter_name">
+						<label class="control-label col-md-5">
+							Automatically output tweets to chat
+							<a href="javascript:;" [tooltip]="getHelpText( 'twitter_chat' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.twitter_chat" name="twitter_chat" [disabled]="!settings.twitter_name" />
+						</div>
+					</div>
+					<hr />
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable YouTube integration
+							<a href="javascript:;" [tooltip]="getHelpText( 'youtube_active' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.youtube_active" name="youtube_active" />
+						</div>
+					</div>
+					<div class="form-group" *ngIf="settings.youtube_active">
+						<label class="control-label col-md-5">
+							YouTube Channel ID
+							<a href="javascript:;" [tooltip]="getHelpText( 'youtube_channel' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" [(ngModel)]="settings.youtube_channel" name="youtube_channel" />
+						</div>
+					</div>
+					<div class="form-group" *ngIf="settings.youtube_active">
+						<label class="control-label col-md-5">
+						</label>
+						<div class="col-md-4">
+							<a href="https://www.youtube.com/account_advanced" class="btn btn-primary" target="_blank">Click here to find your channel ID</a>
+						</div>
+					</div>
+					<div class="form-group" *ngIf="settings.youtube_active">
+						<label class="control-label col-md-5">
+							Automatically post new YouTube videos in chat
+							<a href="javascript:;" [tooltip]="getHelpText( 'youtube_chat' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.youtube_chat" name="youtube_chat" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row" *ngIf="!not_allowed">
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Giveaways</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable keyword giveaways
+							<a href="javascript:;" [tooltip]="getHelpText( 'keyword_active' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.keyword_active" name="keyword_active" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Default keyword duration
+							<a href="javascript:;" [tooltip]="getHelpText( 'keyword_duration' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.keyword_duration" name="keyword_duration" [disabled]="!settings.keyword_active" />
+								<div class="input-group-addon">seconds</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Winner cooldown duration
+							<a href="javascript:;" [tooltip]="getHelpText( 'keyword_win_interval' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.keyword_win_interval" name="keyword_win_interval" [disabled]="!settings.keyword_active" />
+								<div class="input-group-addon">seconds</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Subscriber entries
+							<a href="javascript:;" [tooltip]="getHelpText( 'keyword_sub_entries' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="text" class="form-control" [(ngModel)]="settings.keyword_sub_entries" name="keyword_sub_entries" [disabled]="!settings.keyword_active" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Miscellaneous</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Allow moderators to set stream title
+							<a href="javascript:;" [tooltip]="getHelpText( 'mod_streamtitle' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.mod_streamtitle" name="mod_streamtitle" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable !subs Command
+							<a href="javascript:;" [tooltip]="getHelpText( 'subcmd_enabled' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.subcmd_enabled" name="subcmd_enabled" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="text-center" *ngIf="!not_allowed">
+	<button	[@btnState]="updated ? 'updated' : 'update'"
+			type="button"
+			(click)="updateSettings( )"
+			class="btn btn-lg {{ updated ? 'btn-default blue' : 'btn-default green' }}"
+			style="min-width: 50%"
+			[disabled]="updating">
+		<span *ngIf="!updated">{{ 'button.settings_update' | translate }}</span>
+		<span *ngIf="updated"><i class="icon-ok"></i> {{ 'button.settings_updated' | translate }}</span>
+	</button>
+</div>

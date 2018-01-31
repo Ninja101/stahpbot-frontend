@@ -1,0 +1,89 @@
+<div id="controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="addModal.open( )" class="btn btn-lg green">{{ 'quotes.add' | translate }}</a>
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>
+				<th width="25px"></th>
+				<th width="40%">Quote</th>
+				<th>Date</th>
+				<th style="min-width: 100px;">Added By</th>
+				<th style="min-width: 50px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let quote of quotes | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+				<td [class.active]="checked[quote.quote_id]">
+					<input type="checkbox" class="form-control" [(ngModel)]="checked[quote.quote_id]" />
+				</td>
+				<td [class.active]="checked[quote.quote_id]">
+					{{ quote.text }}
+				</td>
+				<td [class.active]="checked[quote.quote_id]">
+					{{ ( quote.timestamp * 1000 ) | date }}
+				</td>
+				<td [class.active]="checked[quote.quote_id]">
+					{{ quote.user ? quote.user.display_name : "Moderator" }}
+				</td>
+				<td [class.active]="checked[quote.quote_id]">
+					<a href="javascript:;" class="btn btn-sm red-mint" (click)="currEntry = quote; quoteDelete( )" title="Delete">
+						<i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.delete' | translate }}</span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div *ngIf="( !quotes || quotes.length == 0 ) && page == 1 && !fetching" class="text-center"><i>You haven't added any quotes yet</i></div>
+<div *ngIf="fetching" class="text-center">Loading...</div>
+
+<div id="bottom-controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="selectedDelete( )" [class.disabled]="getCheckedCount( ) == 0" class="btn red-mint">
+			{{ 'button.delete_selected' | translate }}
+			<span class="badge" style="font-weight:bold;">{{ getCheckedCount( ) }}</span>
+		</a>&nbsp;
+		<a href="javascript:;" (click)="clearSelected( )" [class.disabled]="getCheckedCount( ) == 0" class="btn btn-default">{{ 'button.clear_selection' | translate }}</a>&nbsp;
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<modal	#addModal
+		title="Add Quote"
+		cancelButtonLabel="Cancel"
+		submitButtonLabel="Add{{ pending ? 'ing' : '' }} Quote"
+		modalClass="modal-lg"
+		[hideCloseButton]="true"
+		[closeOnEscape]="false"
+		[closeOnOutsideClick]="false"
+		(onOpen)="onOpenAdd( )"
+		(onClose)="clearVars( )"
+		(onSubmit)="quoteAdd( )">
+	<modal-content>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Text:
+					<a href="javascript:;" [tooltip]="getHelpText( 'quote.text' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<textarea class="form-control" name="text" [(ngModel)]="currEntry.text"></textarea>
+				</div>
+			</div>
+		</form>
+	</modal-content>
+</modal>

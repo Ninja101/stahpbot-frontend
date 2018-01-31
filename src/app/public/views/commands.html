@@ -1,0 +1,50 @@
+<div id="controls">
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>
+				<th width="15%">Command</th>
+				<th width="30%">Response</th>
+				<th width="30%">Format</th>
+				<th>Permissions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let command of commands | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+				<td>
+					{{ command.command }}
+				</td>
+				<td>
+					{{ command.response }}
+				</td>
+				<td>
+					{{ command.format }}
+					<i *ngIf="!command.format || command.format.length == 0">Not used</i>
+				</td>
+				<td>
+					<div style="display:inline-block;" *ngFor="let tag of command.getPermissions( )">
+						<span class="label label-{{ tag.label }}">
+							{{ tag.text }}
+						</span>&nbsp;
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div *ngIf="( !commands || commands.length == 0 ) && page == 1 && !fetching" class="text-center"><i>There are no custom commands</i></div>
+<div *ngIf="fetching" class="text-center">Loading...</div>
+
+<div id="bottom-controls">
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>

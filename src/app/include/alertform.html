@@ -1,0 +1,374 @@
+<form class="form-horizontal" style="margin-bottom:50px;">
+	<div class="row">
+		<div class="col-lg-6 col-md-12">
+			<h4>General Options</h4>
+			<div class="form-group">
+				<label class="col-md-5 control-label">
+					Type:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.type' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<select name="type" class="form-control" [(ngModel)]="alert.type">
+						<option *ngFor="let type of validTypes" value="{{ type }}">
+							{{ translate[type] }}
+						</option>
+					</select>
+					<strong *ngIf="type == 'donation_top_month' || type == 'donation_top_day'">
+						This is only enabled if donations are processed by Stahpbot
+					</strong>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-5 control-label">
+					Name:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.name' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-7">
+					<input type="text" class="form-control" name="name" [(ngModel)]="alert.name" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-5 control-label">
+					Active:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.active' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="active" [(ngModel)]="alert.active" />
+				</div>
+			</div>
+			<h4>Sound Options</h4>
+			<div class="form-group" *ngIf="alert.exists">
+				<label class="col-md-4 control-label">
+					Current Sound
+				</label>
+				<div class="col-md-6">
+					<audio controls *ngIf="alert.sound_path && alert.sound_path.length > 0">
+						<source
+							src="{{ cdn_url }}alerts/sounds/{{ alert.sound_path }}"
+							type="{{ alert.sound_mimetype }}" />
+					</audio>
+					<span class="form-control-static" *ngIf="!alert.sound_path || alert.sound_path.length == 0">N/A</span>
+				</div>
+			</div>
+			<div class="form-group" *ngIf="alert.exists && alert.sound_path && alert.sound_path.length > 0">
+				<label class="col-md-4 control-label">
+					Remove Current Sound:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.remove_sound' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="remove_sound" [(ngModel)]="alert.remove_sound" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-4 control-label">
+					{{ alert.exists ? 'New ' : '' }}Sound:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.sound' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-7">
+					<input type="file" [attr.name]="'sound' + unique_id" class="form-control" (change)="addSound( $event )" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-4 control-label">
+					Sound Volume:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.sound_volume' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-7">
+					<input type="range" name="sound_volume" class="form-control" list="pct" min="1" max="100" [(ngModel)]="alert.sound_volume" />
+					<datalist id="pct">
+						<option>0</option> 
+						<option>25</option> 
+						<option>50</option> 
+						<option>75</option>
+						<option>100</option> 
+					</datalist>
+					<div class="text-center">
+						{{ alert.sound_volume }}%
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-12">
+			<h4>Effect Options</h4>
+			<div class="form-group">
+				<label class="col-md-5 control-label">
+					Alert Duration:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.duration' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<div class="input-group">
+						<input type="text" name="duration" class="form-control" [(ngModel)]="alert.duration" />
+						<div class="input-group-addon">
+							seconds
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-5 control-label">
+					Entrance Effect:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.enter_effect' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<select name="enter_effect" class="form-control" [(ngModel)]="alert.enter_effect">
+						<option *ngFor="let effect of validEffectIn" value="{{ effect }}">{{ translate[effect] }}</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-5 control-label">
+					Exit Effect:
+					<a href="javascript:;" [tooltip]="getHelpText( 'alert.leave_effect' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<select name="leave_effect" class="form-control" [(ngModel)]="alert.leave_effect">
+					<option *ngFor="let effect of validEffectOut" value="{{ effect }}">{{ translate[effect] }}</option>
+				</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	<h4>
+		Alert Editor
+		<a href="javascript:;" [tooltip]="getHelpText( 'alert.editor' )">
+			<i class="icon-help-circled"></i>
+		</a>
+	</h4>
+	<div id="editor-wrap">
+		<div id="editor">
+			<div id="editor-controls">
+				<div class="pull-left hidden-md hidden-sm hidden-xs">
+					<label [attr.for]="'image' + unique_id" class="btn btn-sm btn-primary">
+						<i class="icon-picture"></i>&nbsp;Add Image
+					</label>
+					<input type="file" class="image-file" [attr.id]="'image' + unique_id" (click)="$event.target.value = '';" (change)="addImage( $event )" />
+					<a href="javascript:;" class="btn btn-sm btn-primary" (click)="addTextModal.open( )">
+						<i class="icon-doc-text"></i>&nbsp;Add Text
+					</a>
+				</div>
+				<div class="pull-right">
+					Width: <input #width type="text" name="width" style="width:60px;" (change)="setWidth( width.value )" value="{{ this.alert.width }}" />&nbsp;
+					Height: <input #height type="text" name="height" style="width:60px;" (change)="setHeight( height.value )" value="{{ this.alert.height }}" />
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div id="editor-body" [style.width]="alert.width + 'px'" [style.height]="alert.height + 'px'">
+				<a	href="javascript:;"
+					*ngFor="let item of image_items"
+					(contextmenu)="onContextMenu($event, item)"
+					[style.top]="item.top + 'px'"
+					[style.left]="item.left + 'px'"
+					[style.z-index]="item.z_index"
+					[attr.style]="item.style"
+					draggable
+					[drag-enabled]="!item.locked"
+					(onDragEnd)="onDragEnd( item, $event )">
+						<img [attr.src]="item.src" />
+				</a>
+				<a	href="javascript:;"
+					*ngFor="let item of text_items"
+					(contextmenu)="onContextMenu($event, item)"
+					[style.top]="item.top + 'px'"
+					[style.left]="item.left + 'px'"
+					[style.z-index]="item.z_index"
+					[attr.style]="item.style"
+					draggable
+					[drag-enabled]="!item.locked"
+					(onDragEnd)="onDragEnd( item, $event )">
+						{{ item.text }}
+				</a>
+			</div>
+		</div>
+	</div>
+	<context-menu>
+		<template contextMenuItem>
+			<span class="btn btn-sm red" style="position:absolute;right:0;padding:2px;"><i class="icon-cancel"></i></span>
+		</template>
+		<template contextMenuItem let-item (execute)="ctxToggleLock( $event.item )">
+			{{ item?.locked ? 'Unlock' : 'Lock' }} Position
+		</template>
+		<template contextMenuItem (execute)="ctxSendBack( $event.item )">
+			Send to back
+		</template>
+		<template contextMenuItem (execute)="ctxSendFront( $event.item )">
+			Send to front
+		</template>
+		<template contextMenuItem (execute)="ctxResizeAlert( $event.item )">
+			Resize alert to this object
+		</template>
+		<template contextMenuItem (execute)="ctxHorizCenter( $event.item )">
+			Horizontal center
+		</template>
+		<template contextMenuItem (execute)="ctxVertCenter( $event.item )">
+			Vertical center
+		</template>
+		<template contextMenuItem let-item (execute)="ctxEdit( $event.item )" [enabled]="item?.type != 'image'">
+			Edit&nbsp;<span class="label label-sm label-danger">Text only</span>
+		</template>
+		<template contextMenuItem (execute)="ctxDelete( $event.item )">
+			Delete
+		</template>
+	</context-menu>
+</form>
+
+<modal  #addTextModal
+		title="{{ editing ? 'Edit' : 'Add' }} Text"
+		cancelButtonLabel="Cancel"
+		submitButtonLabel="{{ editing ? 'Edit' : 'Add' }} Text"
+		modalClass="modal-md"
+		[hideCloseButton]="true"
+		[closeOnEscape]="false"
+		[closeOnOutsideClick]="false"
+		(onClose)="clearVars( )"
+		(onSubmit)="editing ? editText( ) : addText( )">
+	<modal-content>
+		<form class="form-horizontal">
+			<h3>Text Settings</h3>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Text:
+				</label>
+				<div class="col-md-8">
+					<textarea class="form-control" name="text" [(ngModel)]="textData.text" required></textarea><br />
+					<small>
+						Shortcuts:&nbsp;
+						<a *ngFor="let sc of shortcuts[alert.type]" class="label label-primary text-shortcut" (click)="insertText( sc )" href="javascript:;">
+						   + {{ translate[sc] }}
+						</a>&nbsp;&nbsp;
+					</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Text Size:
+				</label>
+				<div class="col-md-3">
+					<div class="input-group">
+						<input type="text" name="size" class="form-control" [(ngModel)]="textData.size" required />
+						<div class="input-group-addon">
+							pixels
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Text Alignment:
+				</label>
+				<div class="col-md-4">
+					<select name="alignment" class="form-control" [(ngModel)]="textData.align" required>
+						<option value="left">Left</option>
+						<option value="center">Center</option>
+						<option value="right">Right</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Text Animation:
+				</label>
+				<div class="col-md-4">
+					<select id="effects" name="effect" class="form-control" [(ngModel)]="textData.effect" required>
+						<option *ngFor="let effect of validTextEffects" value="{{ effect }}">{{ translate[effect] || effect }}</option>
+					</select>
+					<div id="effect-example" [attr.class]="'animated infinite ' + textData.effect">Example Effect</div>
+				</div>
+			</div>
+			<h3>Font Options</h3>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Font:
+				</label>
+				<div class="col-md-4">
+					<select id="fonts" name="font" class="form-control" [(ngModel)]="textData.font" required>
+						<option *ngFor="let font of validFonts" value="{{ font }}" [attr.style]="styles[font]">{{ translate[font] || font }}</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Colour:<br />
+					<small>Hex format: #000000</small>
+				</label>
+				<div class="col-md-4">
+					<input type="text" class="form-control" name="colour" [(ngModel)]="textData.colour" required />
+				</div>
+			</div>
+			<h3>Size Options</h3>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Width:<br />
+					<small>Optional</small>
+				</label>
+				<div class="col-md-4">
+					<div class="input-group">
+						<input type="text" name="width" class="form-control" [(ngModel)]="textData.width" />
+						<div class="input-group-addon">
+							pixels
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Height:<br />
+					<small>Optional</small>
+				</label>
+				<div class="col-md-4">
+					<div class="input-group">
+						<input type="text" name="height" class="form-control" [(ngModel)]="textData.height" />
+						<div class="input-group-addon">
+							pixels
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Maximum Width:<br />
+					<small>Optional</small>
+				</label>
+				<div class="col-md-4">
+					<div class="input-group">
+						<input type="text" name="max_width" class="form-control" [(ngModel)]="textData.max_width" />
+						<div class="input-group-addon">
+							pixels
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-4">
+					Maximum Height:<br />
+					<small>Optional</small>
+				</label>
+				<div class="col-md-4">
+					<div class="input-group">
+						<input type="text" name="max_height" class="form-control" [(ngModel)]="textData.max_height" />
+						<div class="input-group-addon">
+							pixels
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</modal-content>
+</modal>

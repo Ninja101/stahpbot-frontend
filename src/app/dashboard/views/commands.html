@@ -1,0 +1,236 @@
+<div id="controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="addModal.open( )" class="btn btn-lg green">{{ 'commands.add' | translate }}</a>
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>
+				<th width="25px">&nbsp;</th>
+				<th width="20%">Command</th>
+				<th width="20%">Response</th>
+				<th width="20%">Format</th>
+				<th>Cooldown</th>
+				<th>Permissions</th>
+				<th style="min-width: 100px;">Added</th>
+				<th style="min-width: 100px;">Updated</th>
+				<th>Creator</th>
+				<th style="min-width: 160px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let command of commands | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+				<td [class.active]="checked[command.command_id]">
+					<input type="checkbox" class="form-control" [(ngModel)]="checked[command.command_id]" />
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					<small class="label label-info" style="font-size: 10px;" *ngIf="command.channel == 0">
+						<b>Global</b>
+					</small>&nbsp;
+					{{ command.command }}
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					{{ command.response }}
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					{{ command.format }}
+					<i *ngIf="!command.format || command.format.length == 0">Not used</i>
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					{{ command.cooldown }} secs
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					<div style="display:inline-block;" *ngFor="let tag of command.getPermissions( )">
+						<span class="label label-{{ tag.label }}">
+							{{ tag.text }}
+						</span>&nbsp;
+					</div>
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					{{ ( command.timestamp * 1000 ) | date }}
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					{{ ( command.updated * 1000 ) | date }}
+				</td>
+				<td [class.active]="checked[command.command_id]">
+					{{ command.user.display_name || 'N/A' }}
+				</td>
+				<td *ngIf="command.channel > 0 || ( command.channel == 0 && user && user.rank == 'owner' )" [class.active]="checked[command.command_id]">
+					<a href="javascript:;" class="btn btn-sm blue" (click)="currEntry = command; global = ( command.channel == 0 ); addModal.open( )" title="Edit">
+						<i class="icon-pencil"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.edit' | translate }}</span>
+					</a>&nbsp;
+					<a href="javascript:;" class="btn btn-sm red-mint" (click)="currEntry = command; commandDelete( )" title="Delete">
+						<i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.delete' | translate }}</span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div *ngIf="( !commands || commands.length == 0 ) && page == 1 && !fetching" class="text-center"><i>You have no custom commands yet</i></div>
+<div *ngIf="fetching" class="text-center">Loading...</div>
+
+<div id="bottom-controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="selectedDelete( )" [class.disabled]="getCheckedCount( ) == 0" class="btn red-mint">
+			{{ 'button.delete_selected' | translate }}
+			<span class="badge" style="font-weight:bold;">{{ getCheckedCount( ) }}</span>
+		</a>&nbsp;
+		<a href="javascript:;" (click)="clearSelected( )" [class.disabled]="getCheckedCount( ) == 0" class="btn btn-default">{{ 'button.clear_selection' | translate }}</a>&nbsp;
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<modal	#addModal
+		title="{{ currEntry.exists ? 'Edit' : 'Add' }} Custom Command"
+		cancelButtonLabel="Cancel"
+		submitButtonLabel="{{ currEntry.exists ? 'Edit' : 'Add' }}{{ pending ? 'ing' : '' }} Command"
+		modalClass="modal-lg"
+		[hideCloseButton]="true"
+		[closeOnEscape]="false"
+		[closeOnOutsideClick]="false"
+		(onClose)="clearVars( )"
+		(onSubmit)="currEntry.exists ? commandEdit( ) : commandAdd( )">
+	<modal-content>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Command:
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.command' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<input type="text" class="form-control" name="command" [(ngModel)]="currEntry.command" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					{{ currEntry.editable ? 'Value' : 'Response' }}:
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.response' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<textarea class="form-control" name="response" [(ngModel)]="currEntry.response"></textarea>
+					<small>
+						Shortcuts:&nbsp;
+						<a *ngFor="let sc of shortcuts" class="label label-primary text-shortcut" (click)="insertResponse( sc )" href="javascript:;">
+						   + {{ translate[sc] }}
+						</a>&nbsp;&nbsp;
+					</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Allow editing via chat
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.editable' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="editable" [(ngModel)]="currEntry.editable" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Editing format:
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.format' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<textarea class="form-control"
+						name="format"
+						[(ngModel)]="currEntry.format"
+						[disabled]="!currEntry.editable"
+						[attr.title]="!currEntry.editable ? 'Enable editing via chat to use a format' : ''">
+					</textarea>
+					<small>
+						Shortcuts:&nbsp;
+						<a *ngFor="let sc of shortcuts" class="label label-primary text-shortcut" (click)="insertFormat( sc )" href="javascript:;" [class.disabled]="!currEntry.editable">
+						   + {{ translate[sc] }}
+						</a><br /><br />
+						<a class="label label-primary text-shortcut" (click)="insertFormat( '{value}' )" href="javascript:;" [class.disabled]="!currEntry.editable">
+							+ {{ translate['{value}'] }}	
+						</a>
+					</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3"></label>
+				<div class="col-md-6">
+					<small class="form-control-static">
+						<b>Valid timezones for Local Time shortcut:</b>
+						UTC, UTC±N<br />
+						N = Hour offset<br />
+						<br />
+						<b>Countdown format:</b> ISO8601
+						YYYY-MM-DDTHH:mm:SSZ<br />
+						Example: 2016-01-01T01:00:00Z = January 1st, 2016 -- 01:00
+					</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Cooldown:
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.cooldown' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-3">
+					<div class="input-group">
+						<input type="text" class="form-control" name="cooldown" [(ngModel)]="currEntry.cooldown" />
+						<div class="input-group-addon">seconds</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Permissions:
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.permissions' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-3">
+					<select class="form-control" name="permission" [(ngModel)]="currEntry.user_level">
+						<option value="0">Everyone</option>
+						<option value="1">Subscribers</option>
+						<option value="2">Moderators</option>
+						<option value="3">Broadcaster</option>
+						<option value="4" *ngIf="user && user.rank == 'owner'">Admin</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Visible in command list
+					<a href="javascript:;" [tooltip]="getHelpText( 'command.visible' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="visible" [(ngModel)]="currEntry.visible" />
+				</div>
+			</div>
+			<div class="form-group" *ngIf="user && user.rank == 'owner'">
+				<label class="control-label col-md-3">
+					Global?
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="global" [(ngModel)]="global" />
+				</div>
+			</div>
+		</form>
+	</modal-content>
+</modal>

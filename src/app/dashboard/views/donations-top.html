@@ -1,0 +1,61 @@
+<div *ngIf="not_allowed">
+	<h3 class="text-center">Not authorized to access this page</h3>
+</div>
+<div *ngIf="!not_allowed">
+	<div id="controls">
+		<div class="pull-left">
+			<div class="btn-group">
+				<a [routerLink]="[ '/donations' ]" class="btn btn-primary">All Donations</a>
+				<a href="javascript:;" class="btn btn-primary active">Top Donations</a>
+			</div>
+		</div>
+		<div class="pull-right">
+			<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+		</div>
+		<div class="clearfix"> </div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-bordered table-striped table-condensed">
+			<thead>
+				<tr>
+					<th width="20%">Nicknames</th>
+					<th>Email Address</th>
+					<th>Amount</th>
+					<th>Donation Count</th>
+					<th>Received</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let donation of donations | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+					<td>
+						{{ donation.nicknames.replace( ",", ", " ) }}
+					</td>
+					<td>
+						{{ donation.sender_email }}
+					</td>
+					<td>
+						{{ donation.amount + " " + donation.currency }}
+					</td>
+					<td>
+						{{ donation.count }}
+					</td>
+					<td>
+						{{ ( donation.date_from * 1000 ) | date }}
+						<span *ngIf="donation.count > 1"> - {{ ( donation.date_to * 1000 ) | date }}</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div *ngIf="( !donations || donations.length == 0 ) && page == 1 && !error && !fetching" class="text-center"><i>You have no donations yet</i></div>
+	<div *ngIf="fetching" class="text-center">Loading...</div>
+
+	<div id="bottom-controls">
+		<div class="pull-right">
+			<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+		</div>
+		<div class="clearfix"> </div>
+	</div>
+</div>

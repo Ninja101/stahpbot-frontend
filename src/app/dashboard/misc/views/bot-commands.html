@@ -1,0 +1,240 @@
+<div class="panel panel-inverse">
+	<div class="panel-heading">
+		<h4 class="panel-title">Generic Commands</h4>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped">
+				<tr>
+					<th class="col-md-2">Syntax</th><th class="col-md-4">Description</th><th class="col-md-4">Example</th><th class="col-md-1">Permission</th>
+				</tr>
+				<tr>
+					<td>
+						!commands
+					</td>
+					<td>
+						Outputs a link to a list of the channel's custom commands
+					</td>
+					<td>
+						In: <pre>!commands</pre>
+						Out: <pre>Command List: http://stahpbot.com/commands/stahpbot</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-primary">Any</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!nowplaying, !song
+					</td>
+					<td>
+						Output the current playing song from the specified source. (Available sources: Last.FM, Plug.DJ)
+					</td>
+					<td>
+						In: <pre>!nowplaying</pre>
+						Out: <pre>- Now Playing: Artist - Track Name</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-primary">Any</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!permit, !allow [name]
+					</td>
+					<td>
+						Temporarily allow a user to post a link without being timed out
+					</td>
+					<td>
+						In: <pre>!permit Ninja101</pre>
+						Out: <pre>Ninja101 -> Ninja101 is permitted to post a link.</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-danger">Mod</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!quote [text]
+					</td>
+					<td>
+						Outputs a stored quote or if text is present, will add the quoted text to the database. Only moderators can add a new quote.
+					</td>
+					<td>
+						In: <pre>!quote Hello!</pre>
+						Out: <pre>Ninja101 -> Quote added!</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-primary">Any</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!delquote [text]
+					</td>
+					<td>
+						Delete the quoted text from the database
+					</td>
+					<td>
+						In: <pre>!delquote Hello!</pre>
+						Out: <pre>Ninja101 -> Quote removed.</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-danger">Mod</span></h4>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-inverse">
+	<div class="panel-heading">
+		<h4 class="panel-title">Keyword Commands</h4>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped" style="margin: 0 auto; width: 100%;">
+				<tr>
+					<th>Syntax</th><th>Description</th><th>Example</th><th>Permission</th>
+				</tr>
+				<tr>
+					<td>
+						!keyword, !fkeyword, !skeyword [text]
+					</td>
+					<td>
+						Start a keyword giveaway with the specified text. !fkeyword starts a follower-only keyword, !skeyword starts a sub-only keyword.
+					</td>
+					<td>
+						In: <pre>!keyword Test</pre>
+						Out: <pre>- The keyword is 'Test', a random winner will be picked in 30 seconds.</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-danger">Mod</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!reroll
+					</td>
+					<td>
+						Re-roll a winner from the previous keyword entrants.
+					</td>
+					<td>
+						In: <pre>!reroll</pre>
+						Out: <pre>- Congrats: Ninja101!</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-danger">Mod</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!abort
+					</td>
+					<td>
+						Aborts a running keyword giveaway.
+					</td>
+					<td>
+						In: <pre>!abort</pre>
+						Out: <pre>Ninja101 -> Keyword aborted.</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-danger">Mod</span></h4>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-inverse">
+	<div class="panel-heading">
+		<h4 class="panel-title">Utility Commands</h4>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped" style="margin: 0 auto; width: 100%;">
+				<tr>
+					<th>Syntax</th><th>Description</th><th>Example</th><th>Permission</th>
+				</tr>
+				<tr>
+					<td>
+						!emotes
+					</td>
+					<td>
+						Outputs all the channel's subscriber emotes.
+					</td>
+					<td>
+						In: <pre>!emotes</pre>
+						Out: <pre>- Subscriber Emotes: Kappa, PogChamp</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-primary">Any</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!followers
+					</td>
+					<td>
+						Outputs the amount of followers for the channel.
+					</td>
+					<td>
+						In: <pre>!followers</pre>
+						Out: <pre>- There are 26 followers!</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-primary">Any</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!subs
+					</td>
+					<td>
+						Outputs the amount of subscribers for the channel.
+					</td>
+					<td>
+						In: <pre>!subs</pre>
+						Out: <pre>- There are 10 subscribers!</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-success">Subscriber</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!title
+					</td>
+					<td>
+						Sets the stream title. <b>(* Optional setting to allow moderators to use this)</b>
+					</td>
+					<td>
+						In: <pre>!title Testing 123</pre>
+						Out: <pre>Ninja101 -> Title set!</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-danger">Mod*</span></h4>
+						<h4><span class="label bg-purple">Broadcaster</span></h4>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						!uptime
+					</td>
+					<td>
+						Outputs the amount of time the stream has been online
+					</td>
+					<td>
+						In: <pre>!uptime</pre>
+						Out: <pre>- Stream has been up for 1 hour, 23 minutes</pre>
+					</td>
+					<td class="text-center">
+						<h4><span class="label label-primary">Any</span></h4>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

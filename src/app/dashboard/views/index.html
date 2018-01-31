@@ -1,0 +1,236 @@
+<div class="row widget-row">
+	<div class="col-lg-2 col-sm-6">
+		<div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+			<h4 class="widget-thumb-heading">{{ getText( 'subscribers' ) }}</h4>
+			<div class="widget-thumb-wrap">
+				<i class="widget-thumb-icon bg-green icon-heart"></i>
+				<div class="widget-thumb-body">
+					<span class="widget-thumb-body-stat" data-counter="counterup" data-value="0">{{ subscribers != null ? subscribers : '--' }}</span>
+					<span class="widget-thumb-body-subtitle">{{ getText( 'today' ) }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-6">
+		<div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+			<h4 class="widget-thumb-heading">{{ getText( 'timeouts' ) }}</h4>
+			<div class="widget-thumb-wrap">
+				<i class="widget-thumb-icon bg-red icon-block"></i>
+				<div class="widget-thumb-body">
+					<span class="widget-thumb-body-stat" data-counter="counterup" data-value="0">{{ timeouts != null ? timeouts : '--' }}</span>
+					<span class="widget-thumb-body-subtitle">{{ getText( 'today' ) }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-6">
+		<div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+			<h4 class="widget-thumb-heading">{{ getText( 'messages' ) }}</h4>
+			<div class="widget-thumb-wrap">
+				<i class="widget-thumb-icon bg-purple icon-comment"></i>
+				<div class="widget-thumb-body">
+					<span class="widget-thumb-body-stat" data-counter="counterup" data-value="0">{{ usageData.messages != null ? usageData.messages : '--' }}</span>
+					<span class="widget-thumb-body-subtitle">{{ getText( 'today' ) }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 col-sm-6">
+		<div class="widget-thumb widget-bg-color-white text-uppercase margin-bottom-20 bordered">
+			<h4 class="widget-thumb-heading">{{ getText( 'chatters' ) }}</h4>
+			<div class="widget-thumb-wrap">
+				<i class="widget-thumb-icon bg-blue icon-user"></i>
+				<div class="widget-thumb-body">
+					<span class="widget-thumb-body-stat" data-counter="counterup" data-value="0">{{ usageData.chatters != null ? usageData.chatters : '--' }}</span>
+					<span class="widget-thumb-body-subtitle">{{ getText( 'now' ) }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">{{ getText( 'bot_stats' ) }}</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="row text-center">
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						{{ usageData.uptime }}
+						<div class="margin-top-10">
+							<i class="icon-clock"></i>&nbsp;{{ getText( 'bot_stats.uptime' ) }}
+						</div>
+					</div>
+					<div class="margin-bottom-10 visible-sm"> </div>
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						{{ usageData.load }}
+						<div class="margin-top-10">
+							<i class="icon-chart-bar"></i>&nbsp;{{ getText( 'bot_stats.load' ) }}
+						</div>
+					</div>
+					<!--<div class="margin-bottom-10 visible-sm"> </div>
+					<div class="col-lg-4 col-sm-4 col-xs-4">
+						{{ usageData.message_rate || "N/A" }}
+						<div class="margin-top-10">
+							<i class="icon-mail"></i>&nbsp;{{ getText( 'bot_stats.messages' ) }}
+						</div>
+					</div>-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-3 col-xs-12 col-sm-6">
+		<div class="portlet light bordered">
+			<div class="portlet-title tabbable-line">
+				<div class="caption">
+					<i class="icon-font font-dark"></i>
+					<span class="caption-subject font-dark bold uppercase">{{ getText( 'stream_title' ) }}</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<textarea class="form-control" [(ngModel)]="newTitle" style="height:80px;" [attr.placeholder]="newTitle === null ? 'Loading...' : ''"></textarea>
+				<div class="pull-right" style="padding-top:5px;">
+					<a href="javascript:;" class="btn btn-default" (click)="refreshTitle( )" [class.disabled]="titleRunning" title="Refresh stream title">
+						<i class="icon-arrows-cw"></i>
+					</a>
+					<a href="javascript:;" class="btn blue" (click)="updateTitle( )" [class.disabled]="titleRunning">
+						<span *ngIf="titleRunning">{{ getText( 'stream_title.updating' ) }}</span>
+						<span *ngIf="!titleRunning">{{ getText( 'stream_title.update' ) }}</span>
+					</a>
+				</div>
+				<div class="clearfix" style="margin-bottom: 5px;"> </div>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title tabbable-line">
+				<div class="caption">
+					<i class="icon-video font-dark"></i>
+					<span class="caption-subject font-dark bold uppercase">{{ getText( 'commercial' ) }}</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<select class="form-control" [(ngModel)]="commercialDuration">
+					<option value="30" selected>30 seconds</option>
+					<option value="60">60 seconds</option>
+					<option value="90">90 seconds</option>
+					<option value="120">120 seconds</option>
+					<option value="150">150 seconds</option>
+					<option value="180">180 seconds</option>
+				</select>
+				<div class="pull-right" style="padding-top:5px;">
+					<a href="javascript:;" class="btn blue" (click)="runCommercial( )" [class.disabled]="commercialRunning">
+						<span *ngIf="commercialRunning">{{ getText( 'commercial.running' ) }}</span>
+						<span *ngIf="!commercialRunning">{{ getText( 'commercial.run' ) }}</span>
+					</a>
+				</div>
+				<div class="clearfix"> </div>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title tabbable-line">
+				<div class="caption">
+					<i class="icon-flash font-dark"></i>
+					<span class="caption-subject font-dark bold uppercase">{{ getText( 'manage_alerts' ) }}</span>
+				</div>
+			</div>
+			<div class="portlet-body text-center" id="manage-alerts">
+				<input type="button" class="btn btn-sm btn-primary" [attr.value]="getText( 'manage_alerts.test_subscriber' )" (click)="wsTestSub( )" [disabled]="alertRunning" />
+				<input type="button" class="btn btn-sm btn-primary" [attr.value]="getText( 'manage_alerts.test_resubscriber' )" (click)="wsTestResub( )" [disabled]="alertRunning" />
+				<input type="button" class="btn btn-sm btn-primary" [attr.value]="getText( 'manage_alerts.test_donation' )" (click)="wsTestDonation( )" [disabled]="alertRunning" />
+				<input type="button" class="btn btn-sm yellow" [attr.value]="getText( 'manage_alerts.silence_alert' )" (click)="wsStopTTS( )" [disabled]="alertRunning" />
+				<input type="button" class="btn btn-sm red" [attr.value]="getText( 'manage_alerts.cancel_alert' )" (click)="wsStopAlert( )" [disabled]="alertRunning" />
+				<input type="button" class="btn btn-sm btn-primary" [attr.value]="getText( 'manage_alerts.reload_alert' )" (click)="wsReloadAlerts( )" [disabled]="alertRunning" />
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-xs-12 col-sm-6">
+		<div class="portlet light bordered visible-lg visible-md" *ngIf="user && chat_url">
+			<div class="portlet-title tabbable-line">
+				<div class="caption">
+					<i class="icon-chat font-dark"></i>
+					<span class="caption-subject font-dark bold uppercase">{{ getText( 'twitch_chat' ) }}</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<iframe id="chat_frame" [attr.src]="chat_url" width="100%" height="510" frameborder="0"></iframe>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-5 col-xs-12 col-sm-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title tabbable-line">
+				<div class="caption">
+					<i class="icon-book font-dark"></i>
+					<span class="caption-subject font-dark bold uppercase">{{ getText( 'recent_events' ) }}</span>
+				</div>
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#tab_1_1" class="active" data-toggle="tab"> Channel </a>
+					</li>
+					<!--<li>
+						<a href="#tab_1_2" data-toggle="tab"> Website </a>
+					</li>-->
+				</ul>
+			</div>
+			<div class="portlet-body">
+				<div class="tab-content">
+					<div class="tab-pane active" id="tab_1_1">
+						<div style="height: 500px; overflow-y: scroll;" data-always-visible="1" data-rail-visible="0">
+							<ul *ngIf="channel_events && channel_events.length > 0" class="feeds">
+								<li *ngFor="let event of channel_events">
+									<div class="col1">
+										<div class="cont">
+											<div class="cont-col1">
+												<div class="label label-sm label-{{ event.colour }}">
+													<i class="fa {{ event.icon }}"></i>
+												</div>
+											</div>
+											<div class="cont-col2">
+												<div class="desc" [innerHTML]="event.text"></div>
+											</div>
+										</div>
+									</div>
+									<div class="col2">
+										<div class="date"> {{ event.getTimeAgo( ) }} </div>
+									</div>
+								</li>
+							</ul>
+							<div *ngIf="( !channel_events || channel_events.length == 0 ) && !fetching" class="text-center">No events have been recorded</div>
+							<div *ngIf="fetching" class="text-center">Loading...</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab_1_2">
+						<div style="height: 339px; overflow-y: scroll;" data-always-visible="1" data-rail-visible1="1">
+							<ul *ngIf="web_events && web_events.length > 0" class="feeds">
+								<li *ngFor="let event of web_events">
+									<div class="col1">
+										<div class="cont">
+											<div class="cont-col1">
+												<div class="label label-sm label-{{ event.colour }}">
+													<i class="fa {{ event.icon }}"></i>
+												</div>
+											</div>
+											<div class="cont-col2">
+												<div class="desc">
+													{{ event.text }}
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col2">
+										<div class="date"> {{ event.getTimeAgo( ) }} </div>
+									</div>
+								</li>
+							</ul>
+							<div *ngIf="( !web_events || web_events.length == 0 ) && !fetching" class="text-center">No events have been recorded</div>
+							<div *ngIf="fetching" class="text-center">Loading...</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,147 @@
+<div id="controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="addModal.open( )" class="btn btn-lg green">{{ 'blacklist.add' | translate }}</a>
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>
+				<th width="25px">&nbsp;</th>
+				<th width="20%">String</th>
+				<th>Type</th>
+				<th>Timeout Length</th>
+				<th width="20%">Description</th>
+				<th style="min-width: 100px;">Added</th>
+				<th>Creator</th>
+				<th style="min-width: 50px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let entry of blacklist | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+				<td [class.active]="checked[entry.blacklist_id]">
+					<input type="checkbox" class="form-control" [(ngModel)]="checked[entry.blacklist_id]" />
+				</td>
+				<td [class.active]="checked[entry.blacklist_id]">
+					<small class="label label-info" style="font-size: 10px;" *ngIf="entry.channel == 0">
+						<b>Global</b>
+					</small>&nbsp;
+					{{ entry.string }}
+				</td>
+				<td [class.active]="checked[entry.blacklist_id]">
+					{{ entry.type[0].toUpperCase( ) + entry.type.substr( 1 ) }}
+				</td>
+				<td [class.active]="checked[entry.blacklist_id]">
+					<span *ngIf="entry.timeout_length == 0">Permanent</span>
+					<span *ngIf="entry.timeout_length > 0">{{ entry.timeout_length }} secs</span>
+				</td>
+				<td [class.active]="checked[entry.blacklist_id]">
+					{{ entry.description }}
+				</td>
+				<td [class.active]="checked[entry.blacklist_id]">
+					{{ ( entry.timestamp * 1000 ) | date }}
+				</td>
+				<td [class.active]="checked[entry.blacklist_id]">
+					{{ entry.user.display_name }}
+				</td>
+				<td *ngIf="entry.channel > 0 || ( entry.channel == 0 && user && user.rank == 'owner' )" [class.active]="checked[entry.blacklist_id]">
+					<a href="javascript:;" class="btn btn-sm red-mint" (click)="currEntry = entry; blacklistDelete( )" title="Delete">
+						<i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.delete' | translate }}</span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div *ngIf="( !blacklist || blacklist.length == 0 ) && page == 1 && !fetching" class="text-center"><i>You have no entries yet</i></div>
+<div *ngIf="fetching" class="text-center">Loading...</div>
+
+<div id="bottom-controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="selectedDelete( )" [class.disabled]="getCheckedCount( ) == 0" class="btn red-mint">
+			{{ 'button.delete_selected' | translate }}
+			<span class="badge" style="font-weight:bold;">{{ getCheckedCount( ) }}</span>
+		</a>&nbsp;
+		<a href="javascript:;" (click)="clearSelected( )" [class.disabled]="getCheckedCount( ) == 0" class="btn btn-default">{{ 'button.clear_selection' | translate }}</a>&nbsp;
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<modal	#addModal
+		title="Add Entry"
+		cancelButtonLabel="Cancel"
+		submitButtonLabel="Add{{ pending ? 'ing' : '' }} Entry"
+		modalClass="modal-lg"
+		[hideCloseButton]="true"
+		[closeOnEscape]="false"
+		[closeOnOutsideClick]="false"
+		(onOpen)="onOpenAdd( )"
+		(onClose)="clearVars( )"
+		(onSubmit)="blacklistAdd( )">
+	<modal-content>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-md-2">
+					String:
+				</label>
+				<div class="col-md-6">
+					<input type="text" class="form-control" name="string" [(ngModel)]="currEntry.string" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-2">
+					Type:
+				</label>
+				<div class="col-md-2">
+					<select class="form-control" name="type" [(ngModel)]="currEntry.type">
+						<option value="find">Find</option>
+						<option value="regex" disabled>Regex</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-2">
+					Timeout Length:
+				</label>
+				<div class="col-md-3">
+					<div class="input-group">
+						<input type="text" class="form-control" name="length" [(ngModel)]="currEntry.timeout_length" />
+						<div class="input-group-addon">seconds</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-2"></label>
+				<div class="col-md-7">
+					If set to 0, this will permanently ban the user. Use with caution!
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-2">
+					Description:
+				</label>
+				<div class="col-md-4">
+					<textarea class="form-control" name="description" [(ngModel)]="currEntry.description"></textarea>
+				</div>
+			</div>
+			<div class="form-group" *ngIf="user && user.rank == 'owner'">
+				<label class="control-label col-md-2">
+					Global?
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="global" [(ngModel)]="global" />
+				</div>
+			</div>
+		</form>
+	</modal-content>
+</modal>

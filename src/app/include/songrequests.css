@@ -1,0 +1,16 @@
+#requests
+{
+	max-height: 500px;
+	overflow-y: scroll;
+}
+
+#controls > div.col-lg-4
+{
+	margin-top: 20px;
+}
+
+@media (min-width: 1200px)
+{
+	display: flex;
+	align-items: center;
+}

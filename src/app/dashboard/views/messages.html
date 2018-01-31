@@ -1,0 +1,155 @@
+<div id="controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="addModal.open( )" class="btn btn-lg green">{{ 'messages.add' | translate }}</a>
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed">
+		<thead>
+			<tr>
+				<th width="25px">&nbsp;</th>
+				<th width="40%">Text</th>
+				<th>Type</th>
+				<th>Interval</th>
+				<th style="min-width: 100px;">Added</th>
+				<th style="min-width: 100px;">Updated</th>
+				<th>Creator</th>
+				<th style="min-width: 100px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let entry of messages | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+				<td [class.active]="checked[entry.message_id]">
+					<input type="checkbox" class="form-control" [(ngModel)]="checked[entry.message_id]" />
+				</td>
+				<td [class.active]="checked[entry.message_id]">
+					{{ entry.text }}
+				</td>
+				<td [class.active]="checked[entry.message_id]">
+					{{ getTypeName( entry.type ) }}
+				</td>
+				<td [class.active]="checked[entry.message_id]">
+					<span *ngIf="entry.type != 'scheduled'"><i>N/A</i></span>
+					<span *ngIf="entry.type == 'scheduled' && ( entry.interval % 60 == 0 )">
+						{{ entry.interval / 60 }} mins
+					</span>
+					<span *ngIf="entry.type == 'scheduled' && ( entry.interval % 60 != 0 )">
+						{{ entry.interval }} secs
+					</span>
+				</td>
+				<td [class.active]="checked[entry.message_id]">
+					{{ ( entry.timestamp * 1000 ) | date }}
+				</td>
+				<td [class.active]="checked[entry.message_id]">
+					{{ ( entry.updated * 1000 ) | date }}
+				</td>
+				<td [class.active]="checked[entry.message_id]">
+					{{ entry.user.display_name }}
+				</td>
+				<td>
+					<a href="javascript:;" class="btn btn-sm blue" (click)="currEntry = entry; addModal.open( )" title="Edit">
+						<i class="icon-pencil"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.edit' | translate }}</span>
+					</a>&nbsp;
+					<a href="javascript:;" class="btn btn-sm red-mint" (click)="currEntry = entry; messageDelete( )" title="Delete">
+						<i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.delete' | translate }}</span>
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div *ngIf="( !messages || messages.length == 0 ) && page == 1 && !fetching" class="text-center"><i>You have no custom messages yet</i></div>
+<div *ngIf="fetching" class="text-center">Loading...</div>
+
+<div id="bottom-controls">
+	<div class="pull-left">
+		<a href="javascript:;" (click)="selectedDelete( )" [class.disabled]="getCheckedCount( ) == 0" class="btn red-mint">
+			{{ 'button.delete_selected' | translate }}
+			<span class="badge" style="font-weight:bold;">{{ getCheckedCount( ) }}</span>
+		</a>&nbsp;
+		<a href="javascript:;" (click)="clearSelected( )" [class.disabled]="getCheckedCount( ) == 0" class="btn btn-default">{{ 'button.clear_selection' | translate }}</a>&nbsp;
+	</div>
+	<div class="pull-right">
+		<pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+	</div>
+	<div class="clearfix"> </div>
+</div>
+
+<modal	#addModal
+		title="{{ currEntry.exists ? 'Edit' : 'Add' }} Custom Message"
+		cancelButtonLabel="Cancel"
+		submitButtonLabel="{{ currEntry.exists ? 'Edit' : 'Add' }}{{ pending ? 'ing' : '' }} Message"
+		modalClass="modal-lg"
+		[hideCloseButton]="true"
+		[closeOnEscape]="false"
+		[closeOnOutsideClick]="false"
+		(onOpen)="onOpenAdd( )"
+		(onClose)="clearVars( )"
+		(onSubmit)="currEntry.exists ? messageEdit( ) : messageAdd( )">
+	<modal-content>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Type:
+					<a href="javascript:;" [tooltip]="getHelpText( 'message.type' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-3">
+					<select class="form-control" name="permission" [(ngModel)]="currEntry.type">
+						<option *ngFor="let type of validTypes" value="{{ type }}">
+							{{ getTypeName( type ) }}
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Text:
+					<a href="javascript:;" [tooltip]="getHelpText( 'message.text' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-6">
+					<textarea class="form-control" name="text" [(ngModel)]="currEntry.text"></textarea>
+				</div>
+			</div>
+			<div class="form-group" *ngIf="currEntry.type == 'scheduled'">
+				<label class="control-label col-md-3">
+					Interval:
+					<a href="javascript:;" [tooltip]="getHelpText( 'message.interval' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-4">
+					<input type="text" class="form-control" name="interval" [(ngModel)]="currEntry.interval" />
+				</div>
+			</div>
+			<div class="form-group" *ngIf="currEntry.type == 'scheduled'">
+				<label class="control-label col-md-3">
+					Only when stream is live?
+					<a href="javascript:;" [tooltip]="getHelpText( 'message.only_live' )">
+						<i class="icon-help-circled"></i>
+					</a>
+				</label>
+				<div class="col-md-2">
+					<input type="checkbox" class="form-control" name="only_live" [(ngModel)]="currEntry.only_live" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">
+					Help:
+				</label>
+				<div class="col-md-9">
+					<div class="form-control-static" [innerHTML]="getExample( currEntry.type )"></div>
+				</div>
+			</div>
+		</form>
+	</modal-content>
+</modal>

@@ -1,0 +1,98 @@
+ <div *ngIf="not_allowed">
+	<h3 class="text-center">Not authorized to access this page</h3>
+</div>
+ <div *ngIf="!not_allowed">
+    <div id="controls">
+        <div class="pull-left hidden-sm hidden-xs">
+            <a href="javascript:;" (click)="addModal.open( )" class="btn btn-lg green">{{ 'alerts.add' | translate }}</a>
+        </div>
+        <div class="pull-right">
+            <pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th width="25px">&nbsp;</th>
+                    <th width="20%">Name</th>
+                    <th>Type</th>
+                    <th>Active</th>
+                    <th style="min-width: 100px;">Added</th>
+                    <th style="min-width: 100px;">Updated</th>
+                    <th>Creator</th>
+                    <th style="min-width: 100px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let alert of alerts | paginate: { itemsPerPage: per_page, currentPage: page, totalItems: totalItems }">
+                    <td [class.active]="checked[alert.alert_id]">
+                        <input type="checkbox" class="form-control" [(ngModel)]="checked[alert.alert_id]" />
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        {{ alert.name }}
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        {{ translate[alert.type] || alert.type }}
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        {{ alert.active == '1' ? 'Yes' : 'No' }}
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        {{ ( alert.timestamp * 1000 ) | date }}
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        {{ ( alert.updated * 1000 ) | date }}
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        {{ alert.user ? alert.user.display_name : 'N/A' }}
+                    </td>
+                    <td [class.active]="checked[alert.alert_id]">
+                        <button type="button" class="btn blue hidden-sm hidden-xs" (click)="currEntry = alert; addModal.open( )" title="Edit">
+                            <i class="icon-pencil"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.edit' | translate }}</span>
+                        </button>
+                        <button type="button" class="btn red-mint" (click)="currEntry = alert; alertDelete( );" title="Delete">
+                            <i class="icon-cancel"></i><span class="hidden-md hidden-sm hidden-xs">&nbsp;{{ 'button.delete' | translate }}</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="( !alerts || alerts.length == 0 ) && page == 1 && !fetching" class="text-center"><i>You have no alerts yet</i></div>
+    <div *ngIf="fetching" class="text-center">Loading...</div>
+
+    <div class="pull-left">
+        <a href="javascript:;" (click)="selectedDelete( )" [class.disabled]="getCheckedCount( ) == 0" class="btn red-mint">
+            {{ 'button.delete_selected' | translate }}
+            <span class="badge" style="font-weight:bold;">{{ getCheckedCount( ) }}</span>
+        </a>&nbsp;
+        <a href="javascript:;" (click)="clearSelected( )" [class.disabled]="getCheckedCount( ) == 0" class="btn btn-default">{{ 'button.clear_selection' | translate }}</a>&nbsp;
+    </div>
+    <div class="pull-right">
+        <pagination-controls (pageChange)="getPage( $event )"></pagination-controls>
+    </div>
+    <div class="clearfix"> </div>
+</div>
+
+<modal  #addModal
+        title="{{ currEntry.exists ? 'Edit' : 'Add' }} Alert"
+        cancelButtonLabel="Cancel"
+        submitButtonLabel="{{ currEntry.exists ? 'Edit' : 'Add' }}{{ pending ? 'ing' : '' }} Alert"
+        modalClass="modal-lg"
+        [hideCloseButton]="true"
+        [closeOnEscape]="false"
+        [closeOnOutsideClick]="false"
+        (onClose)="clearVars( )"
+        (onSubmit)="currEntry.exists ? alertEdit( ) : alertAdd( )">
+    <modal-content>
+        <div class="alert alert-danger visible-md">
+            Notice: Your device might not be able to use the alert editor. It is currently only supported for devices with mouse input. 
+        </div>
+
+        <alert-form #alertForm [alert]="currEntry"></alert-form>
+    </modal-content>
+</modal>

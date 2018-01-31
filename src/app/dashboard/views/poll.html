@@ -1,0 +1,78 @@
+<div class="row">
+	<div class="col-lg-8 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Poll Control</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div *ngIf="running">
+					<div class="text-center">
+						Link to poll: <a [attr.href]="poll_url_text" target="_blank" [innerText]="poll_url_text"></a>
+					</div>
+
+					<iframe [attr.src]="poll_url" width="685px" height="410px" style="display:block;margin: 0 auto;" frameborder="0"></iframe>
+
+					<button type="button" class="btn btn-default green" (click)="pollClose( )">Close Poll</button>
+				</div>
+				<div *ngIf="!running">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-lg-3 col-md-4" for="text">Poll Question:</label>
+							<div class="col-lg-5 col-md-8">
+								<input type="text" class="form-control" name="text" required [(ngModel)]="pollQuestion">
+							</div>
+						</div>
+						<div class="form-group text-left">
+							<label class="control-label col-lg-3 col-md-4" for="answer">Poll Answers:</label>
+							<div class="col-lg-5 col-md-8">
+								<div *ngFor="let idx of pollAnswersIdx" class="input-group">
+									<div class="input-group-addon">{{ idx + 1 }}.</div>
+									<input type="text" class="form-control" name="answer[{{ idx }}]" [(ngModel)]="pollAnswers[idx]">
+									<div class="input-group-addon" *ngIf="idx > 1">
+										<a href="javascript:;" (click)="removeAnswer( idx )"><i class="icon-cancel"></i></a>
+									</div>
+								</div>
+								<button type="button" class="btn btn-default" (click)="addAnswer( )">Add Answer</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-3 col-md-4" for="multi">Allow multiple answers?</label>
+							<div class="col-lg-1 col-md-3">
+								<input type="checkbox" class="form-control" name="multi" [(ngModel)]="pollMulti">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-3 col-md-4" for="dupe">Prevent duplicate votes?</label>
+							<div class="col-lg-1 col-md-3">
+								<input type="checkbox" class="form-control" name="dupe" [(ngModel)]="pollDupeCheck">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-3 col-md-4" for="captcha">Require a captcha?</label>
+							<div class="col-lg-1 col-md-3">
+								<input type="checkbox" class="form-control" name="captcha" [(ngModel)]="pollCaptcha">
+							</div>
+						</div>
+						<input type="button" class="btn btn-default green" value="Create Poll" (click)="pollStart( )" [disabled]="starting" />
+					</form>
+					<br />
+					<small>Powered by Strawpoll.me</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Chat</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<iframe *ngIf="url" [attr.src]="url" width="100%" height="550" frameborder="0" scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+</div>

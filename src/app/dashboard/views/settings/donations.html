@@ -1,0 +1,226 @@
+<div *ngIf="not_allowed">
+	<h3 class="text-center">Not authorized to access this page</h3>
+</div>
+<div class="row" *ngIf="!not_allowed">
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Main</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable donations
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_enabled' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.donation_enabled" name="donation_enabled" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Announce donations in chat
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_chat' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.donation_chat" name="donation_chat" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Maximum donation message length
+							<a href="javascript:;" [tooltip]="getHelpText( 'alert_message_length' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.alert_message_length" name="alert_message_length" />
+								<div class="input-group-addon">characters</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Stahpbot Donations</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="text-center margin-bottom-20" *ngIf="user">
+					If enabled, viewers can send donations via the following link: <b><a href="https://donate.stahpbot.com/{{ user.username | lowercase }}" target="_blank">https://donate.stahpbot.com/{{ user.username | lowercase }}</a></b>
+				</div>
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable Stahpbot donations
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_enabled_stahpbot' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.donation_enabled_stahpbot" name="donation_enabled_stahpbot" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							PayPal email address
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_email' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" [(ngModel)]="settings.donation_email" name="donation_email" [disabled]="!settings.donation_enabled_stahpbot" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Preferred currency
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_preferred' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<select class="form-control" [(ngModel)]="settings.donation_preferred" name="donation_preferred" [disabled]="!settings.donation_enabled_stahpbot">
+								<option value="EUR">Euro</option>
+								<option value="GBP">Great British Pound</option>
+								<option value="USD">US Dollar</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Minimum donation amount
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_minimum' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.donation_minimum" name="donation_minimum" [disabled]="!settings.donation_enabled_stahpbot" />
+								<div class="input-group-addon">{{ settings.donation_preferred }}</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Message on donation page
+							<a href="javascript:;" [tooltip]="getHelpText( 'donation_note' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<textarea class="form-control" style="min-height:100px;" [(ngModel)]="settings.donation_note" name="donation_note" [disabled]="!settings.donation_enabled_stahpbot"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">ImRaising Integration</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							ImRaising API Key
+							<a href="javascript:;" [tooltip]="getHelpText( 'imraising_apikey' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" [(ngModel)]="settings.imraising_apikey" name="imraising_apikey" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">StreamTip Integration</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							StreamTip Client ID
+							<a href="javascript:;" [tooltip]="getHelpText( 'streamtip_clientid' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" [(ngModel)]="settings.streamtip_clientid" name="streamtip_clientid" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							StreamTip API Key
+							<a href="javascript:;" [tooltip]="getHelpText( 'streamtip_accesstoken' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" [(ngModel)]="settings.streamtip_accesstoken" name="streamtip_accesstoken" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">TwitchAlerts Integration</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Status:
+						</label>
+						<div class="col-md-4">
+							<span *ngIf="settings.twitchalerts_accesstoken" class="text-success form-control-static">Connected</span>
+							<span *ngIf="!settings.twitchalerts_accesstoken" class="form-control-static">Not Connected</span>
+						</div>
+					</div>
+					<div class="form-group" *ngIf="!settings.twitchalerts_accesstoken">
+						<label class="control-label col-md-5"></label>
+						<div class="col-md-4">
+							<a href="javascript:;" (click)="connectTwitchAlerts( )" class="btn btn-default green" [class.disabled]="twitchAlertsLoading">
+								{{ twitchAlertsLoading ? 'Connecting...' : 'Connect' }}
+							</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="text-center" *ngIf="!not_allowed">
+	<button	[@btnState]="updated ? 'updated' : 'update'"
+			type="button"
+			(click)="updateSettings( )"
+			class="btn btn-lg {{ updated ? 'btn-default blue' : 'btn-default green' }}"
+			style="min-width: 50%"
+			[disabled]="updating">
+		<span *ngIf="!updated">{{ 'button.settings_update' | translate }}</span>
+		<span *ngIf="updated"><i class="icon-ok"></i> {{ 'button.settings_updated' | translate }}</span>
+	</button>
+</div>

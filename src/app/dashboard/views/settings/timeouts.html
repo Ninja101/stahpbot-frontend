@@ -1,0 +1,311 @@
+<div *ngIf="not_allowed">
+	<h3 class="text-center">Not authorized to access this page</h3>
+</div>
+<div class="row" *ngIf="!not_allowed">
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Main</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable bot timeouts
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_enabled' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_enabled" name="timeout_enabled" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Log moderator timeouts
+							<a href="javascript:;" [tooltip]="getHelpText( 'log_moderator_actions' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.log_moderator_actions" name="log_moderator_actions" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Announce timeouts in chat
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_notify' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_notify" name="timeout_notify" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable subscriber immunity
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_subimmunity' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_subimmunity" name="timeout_subimmunity" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Emotes Settings</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable timeout for emote spam
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_emotes' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_emotes" name="timeout_emotes" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Maximum emotes per message
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_emotes_limit' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_emotes_limit" name="timeout_emotes_limit" />
+								<div class="input-group-addon">emotes</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Timeout duration for emote spam
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_emotes_length' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_emotes_length" name="timeout_emotes_length" />
+								<div class="input-group-addon">seconds</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Spam Settings</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable timeout for symbol spam
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_symbols' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_symbols" name="timeout_symbols" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Maximum symbols per message
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_symbols_limit' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_symbols_limit" name="timeout_symbols_limit" />
+								<div class="input-group-addon">symbols</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Timeout duration for symbols spam
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_symbols_length' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_symbols_length" name="timeout_symbols_length" />
+								<div class="input-group-addon">seconds</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Link Settings</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable timeout for links
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_urls' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_urls" name="timeout_urls" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Allow links from subscribers
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_urls_subimmunity' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_urls_subimmunity" name="timeout_urls_subimmunity" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Timeout duration for links
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_urls_length' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_urls_length" name="timeout_urls_length" />
+								<div class="input-group-addon">seconds</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Link Whitelist</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="pull-right">
+					<pagination-controls (pageChange)="getWhitelistPage( $event )"></pagination-controls>
+				</div>
+				<div class="clearfix"> </div>
+				<table class="table table-bordered table-striped table-condensed">
+					<thead>
+						<tr>
+							<th width="40%">Domain</th>
+							<th>Added By</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let item of whitelist | paginate: { itemsPerPage: whitelistPerPage, currentPage: whitelistPage, totalItems: whitelistCount }">
+							<td>{{ item.domain }}</td>
+							<td>{{ item.user ? item.user.display_name : 'N/A' }}</td>
+							<td>
+								<a href="javascript:;" class="btn btn-sm red-mint" (click)="deleteWhitelist( item )">
+									<i class="icon-cancel"></i>&nbsp;{{ 'button.delete' | translate }}
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="input-group col-md-7 col-xs-12">
+					<input type="text" class="form-control" placeholder="Add Domain" [(ngModel)]="whitelistDomain" />
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-default green" (click)="addWhitelist( )">{{ 'button.add' | translate }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Zalgo Settings</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Enable timeout for zalgo text
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_zalgo' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-2">
+							<input type="checkbox" class="form-control" [(ngModel)]="settings.timeout_zalgo" name="timeout_zalgo" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Threshold for zalgo text 
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_zalgo_threshold' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_zalgo_threshold" name="timeout_zalgo_threshold" />
+								<div class="input-group-addon">characters</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">
+							Timeout duration for zalgo text
+							<a href="javascript:;" [tooltip]="getHelpText( 'timeout_zalgo_length' )">
+								<i class="icon-help-circled"></i>
+							</a>
+						</label>
+						<div class="col-md-3">
+							<div class="input-group">
+								<input type="text" class="form-control" [(ngModel)]="settings.timeout_zalgo_length" name="timeout_zalgo_length" />
+								<div class="input-group-addon">seconds</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="text-center" *ngIf="!not_allowed">
+	<button	[@btnState]="updated ? 'updated' : 'update'"
+			type="button"
+			(click)="updateSettings( )"
+			class="btn btn-lg {{ updated ? 'btn-default blue' : 'btn-default green' }}"
+			style="min-width: 50%"
+			[disabled]="updating">
+		<span *ngIf="!updated">{{ 'button.settings_update' | translate }}</span>
+		<span *ngIf="updated"><i class="icon-ok"></i> {{ 'button.settings_updated' | translate }}</span>
+	</button>
+</div>

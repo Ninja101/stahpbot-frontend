@@ -1,0 +1,151 @@
+<div class="row">
+	<div class="col-lg-8 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Giveaway Control</span>
+				</div>
+			</div>
+			<div class="portlet-body text-center">
+				<div *ngIf="curr_keyword">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-lg-offset-3 col-lg-2 col-md-4" for="text">Current keyword:</label>
+							<div class="col-lg-3 col-md-8">
+								<p class="form-control-static">{{ curr_keyword.text }}</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-offset-3 col-lg-2 col-md-4" for="text">Participants:</label>
+							<div class="col-lg-3 col-md-8">
+								<p class="form-control-static">{{ translate['level_' + curr_keyword.level] }}</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-offset-3 col-lg-2 col-md-4" for="text">Duration:</label>
+							<div class="col-lg-3 col-md-8">
+								<p class="form-control-static" *ngIf="curr_keyword.duration && curr_keyword.duration > 0">{{ curr_keyword.duration }} seconds</p>
+								<p class="form-control-static" *ngIf="!curr_keyword.duration || curr_keyword.duration == 0"><i>Manual</i></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-offset-3 col-lg-2 col-md-4" for="text">Started by:</label>
+							<div class="col-lg-3 col-md-8">
+								<p class="form-control-static">{{ curr_keyword.starter }}</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-offset-3 col-lg-2 col-md-4" for="text">Participants:</label>
+							<div class="col-lg-3 col-md-8">
+								<div class="form-control-static">
+									<div class="label label-danger" title="Moderators">
+										<i class="icon-flash"></i> {{ curr_keyword.counts.mod }}
+									</div>
+									<div class="label label-success" title="Subscribers">
+										<i class="icon-star"></i> {{ curr_keyword.counts.sub }}
+									</div>
+									<div class="label label-info" title="Viewers">
+										<i class="icon-user"></i> {{ curr_keyword.counts.viewer }}
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" *ngIf="curr_keyword.winner">
+							<div class="col-lg-offset-3 col-lg-6 col-md-12">
+								<div class="portlet light bordered">
+									<div class="portlet-title">
+										<div class="caption">
+											<span class="caption-subject font-dark bold uppercase">Winner</span>
+										</div>
+									</div>
+									<div class="portlet-body text-left text-danger" *ngIf="curr_keyword.winner.error">
+										Error: Failed to pick a winner
+									</div>
+									<div class="portlet-body text-left" *ngIf="!curr_keyword.winner.error">
+										<img class="img-circle pull-left" [attr.src]="curr_keyword.winner.logo || default_image" width="70" />
+										<div class="pull-left winner-name">
+											<b>{{ curr_keyword.winner.name }}</b><br />
+											<a href="https://twitch.tv/{{ curr_keyword.winner.name | lowercase }}/profile" target="_blank" class="btn btn-sm btn-primary purple">
+												<i class="icon-twitch"></i>&nbsp;Profile
+											</a>&nbsp;
+											<a href="http://www.twitch.tv/message/compose?to={{ curr_keyword.winner.name | lowercase }}" target="_blank" class="btn btn-sm btn-primary">
+												Send PM
+											</a>
+										</div>
+										<div class="clearfix"></div>
+										<div class="well messages-well">
+											<b>Messages</b>
+											<div class="message" *ngFor="let msg of curr_keyword.winner_msgs">
+												<small>{{ msg.timestamp | date:'shortTime' }}</small>&nbsp;{{ msg.text }}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<input type="button" class="btn btn-default green" value="Pick Winner" (click)="pickWinner( )" [disabled]="starting" *ngIf="curr_keyword.duration == 0 && running" />
+						<input type="button" class="btn btn-default green" value="Reroll Winner" (click)="rerollWinner( )" [disabled]="starting" *ngIf="curr_keyword.winner && !curr_keyword.winner.error && !running" />
+						<input type="button" class="btn btn-default green" value="Abort Keyword" (click)="abortKeyword( )" [disabled]="starting" *ngIf="running" />
+						<input type="button" class="btn btn-default green" value="Close Keyword" (click)="closeKeyword( )" *ngIf="!running" />
+					</form>
+				</div>
+				<div *ngIf="!curr_keyword">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-lg-2 col-md-4" for="text">Keyword text:</label>
+							<div class="col-lg-5 col-md-8">
+								<input type="text" class="form-control" name="text" required [(ngModel)]="keywordText">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-2 col-md-4" for="participants">Participants:</label>
+							<div class="col-lg-3 col-md-4">
+								<select class="form-control" name="participants" required [(ngModel)]="keywordLevel">
+									<option value="0" selected>Anyone</option>
+									<option value="1">Followers</option>
+									<option value="2">Subscribers</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-2 col-md-4" for="use_duration">Automatically ends?</label>
+							<div class="col-lg-1 col-md-3">
+								<input type="checkbox" class="form-control" name="use_duration" [(ngModel)]="keywordUseDuration">
+							</div>
+						</div>
+						<div class="form-group" *ngIf="keywordUseDuration">
+							<label class="control-label col-lg-2 col-md-4" for="duration">Ends after</label>
+							<div class="col-lg-3 col-md-4">
+								<div class="input-group">
+									<input type="text" class="form-control" name="duration" required [(ngModel)]="keywordDuration">
+									<div class="input-group-addon">seconds</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-lg-2 col-md-4" for="announced">Announce in chat?</label>
+							<div class="col-lg-1 col-md-3">
+								<input type="checkbox" class="form-control" name="announced" [(ngModel)]="keywordAnnounce">
+							</div>
+						</div>
+						<input type="button" class="btn btn-default green" value="Start Keyword" (click)="startKeyword( )" [disabled]="starting" />
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-md-12">
+		<div class="portlet light bordered">
+			<div class="portlet-title">
+				<div class="caption">
+					<span class="caption-subject font-dark bold uppercase">Chat</span>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<iframe *ngIf="url" [attr.src]="url" width="100%" height="550" frameborder="0" scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+</div>
